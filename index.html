@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>بوابة نتائج الطلاب</title>
+<title>بوابة نتيجة الطلاب — الفاروق الثانوية بنين</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
@@ -504,8 +504,8 @@ footer{
     <div class="header-pill">
       <div class="h-icon"><i class="fas fa-graduation-cap"></i></div>
       <div class="h-text">
-        <h1>بوابة نتائج الصفين الأول والثاني الثانوي</h1>
-        <p><i class="fas fa-shield-halved" style="margin-left:4px;color:var(--brick-light)"></i>نظام رسمي للاستعلام عن نتائج الطلاب</p>
+        <h1>بوابة نتيجة الصفين الأول والثاني الثانوي</h1>
+        <p><i class="fas fa-school" style="margin-left:4px;color:var(--brick-light)"></i>الفاروق الثانوية بنين &mdash; نظام رسمي للاستعلام</p>
       </div>
     </div>
     <div><span class="year-tag" id="yearTag"><i class="fas fa-calendar-days" style="margin-left:5px"></i></span></div>
@@ -687,6 +687,17 @@ function detectCols(headers){
   return m;
 }
 
+function formatPct(v){
+  if(!v||v==='—') return v;
+  var n=parseFloat(String(v).replace(/[^\d.]/g,''));
+  if(isNaN(n)) return v;
+  // Excel stores % as decimal: 0.69 → 69%
+  if(n>0 && n<=1) n=n*100;
+  // Round to 2 decimal places, remove trailing zeros
+  var s=n.toFixed(2).replace(/\.?0+$/,'');
+  return s+'%';
+}
+
 function normAr(s){
   return String(s||'').replace(/[أإآا]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي')
     .replace(/\s+/g,' ').trim().toLowerCase();
@@ -765,7 +776,7 @@ function displayResult(rec){
   var grade  =cv(rec,cm.grade)     ||currentGradeLabel;
   var section=cv(rec,cm.section)   ||'';
   var total  =cv(rec,cm.total)     ||'—';
-  var pct    =cv(rec,cm.percent)   ||'—';
+  var pct    =formatPct(cv(rec,cm.percent))   ||'—';
   var glabel =cv(rec,cm.gradeLabel)||'—';
   var status =cv(rec,cm.status)    ||'—';
   var notes  =cv(rec,cm.notes)     ||'';
@@ -883,7 +894,7 @@ function printResult(){
   var grade  =cv(rec,cm.grade)     ||currentGradeLabel;
   var section=cv(rec,cm.section)   ||'—';
   var total  =cv(rec,cm.total)     ||'—';
-  var pct    =cv(rec,cm.percent)   ||'—';
+  var pct    =formatPct(cv(rec,cm.percent))   ||'—';
   var glabel =cv(rec,cm.gradeLabel)||'—';
   var status =cv(rec,cm.status)    ||'—';
   var notes  =cv(rec,cm.notes)     ||'';
@@ -924,7 +935,7 @@ function printResult(){
     +'<div class="top">'
     +'<div style="font-size:2.4rem;margin-bottom:6px">&#127891;</div>'
     +'<div class="doc-title">بيان نتيجة طالب</div>'
-    +'<div class="sub">وزارة التربية والتعليم &mdash; نتيجة رسمية معتمدة</div>'
+    +'<div class="sub">الفاروق الثانوية بنين &mdash; وزارة التربية والتعليم</div>'
     +'<div class="div"></div></div>'
     +'<div class="ig">'
     +'<div class="ii full"><label>اسم الطالب</label><span style="font-size:1.15rem">'+name+'</span></div>'
@@ -964,7 +975,7 @@ function printCertificate(){
   var name  =cv(rec,cm.name)      ||'—';
   var grade =cv(rec,cm.grade)     ||currentGradeLabel;
   var total =cv(rec,cm.total)     ||'—';
-  var pct   =cv(rec,cm.percent)   ||'—';
+  var pct   =formatPct(cv(rec,cm.percent))   ||'—';
   var glabel=cv(rec,cm.gradeLabel)||'—';
   var today =new Date().toLocaleDateString('ar-EG',{year:'numeric',month:'long',day:'numeric'});
 
@@ -1003,6 +1014,7 @@ function printCertificate(){
     +'<div class="co tl"></div><div class="co tr"></div>'
     +'<div class="co bl"></div><div class="co br"></div>'
     +'<div class="stars">&#9733; &#9733; &#9733;</div>'
+    +'<div style="font-size:.8rem;color:#b08878;font-weight:700;margin-bottom:4px">الفاروق الثانوية بنين</div>'
     +'<div class="ct">شهادة تقدير وامتياز</div>'
     +'<div class="cen">Certificate of Excellence &amp; Appreciation</div>'
     +'<div class="cdiv"></div>'
