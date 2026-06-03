@@ -5,43 +5,52 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#0f2f57" />
-  <title>بوابة الاستعلام عن نتائج الصفين الأول والثاني الثانوي</title>
+  <title>مدرسة الفارق الثانوية بنين - بوابة النتائج الإلكترونية</title>
 
+  <!-- الخطوط والأيقونات -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PKPKZ5QiAj6Ta8PUb4LZKxnBTFLN7C6R0XkACt+N5QZ0WQGZ0Xf+2Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  
+  <!-- مكتبة قراءة ملفات الإكسيل -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
   <style>
     :root {
       --primary: #0f2f57;
-      --primary-2: #154876;
-      --primary-3: #0b2442;
+      --primary-light: #1e4577;
+      --primary-dark: #071930;
       --gold: #c69a45;
-      --green: #16815f;
-      --red: #b42318;
-      --bg: #f3f6fb;
+      --gold-light: #e5b85f;
+      --green: #10b981;
+      --red: #ef4444;
+      --bg: #f4f7fc;
       --card: #ffffff;
-      --text: #152238;
-      --muted: #6b7280;
-      --line: #dce3ee;
-      --shadow: 0 20px 55px rgba(15, 47, 87, 0.12);
-      --radius: 24px;
+      --text: #1e293b;
+      --muted: #64748b;
+      --line: #e2e8f0;
+      --shadow-sm: 0 4px 6px -1px rgba(15, 47, 87, 0.05);
+      --shadow-md: 0 10px 15px -3px rgba(15, 47, 87, 0.08);
+      --shadow-lg: 0 20px 40px -5px rgba(15, 47, 87, 0.12);
+      --radius: 20px;
     }
 
-    * { box-sizing: border-box; }
+    * { 
+      box-sizing: border-box; 
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
 
     html { scroll-behavior: smooth; }
 
     body {
       margin: 0;
       font-family: "Tajawal", Arial, sans-serif;
-      background:
-        radial-gradient(circle at top right, rgba(198, 154, 69, 0.16), transparent 34rem),
-        linear-gradient(180deg, #edf2f9 0%, var(--bg) 42%, #ffffff 100%);
+      background: linear-gradient(180deg, #f0f4f9 0%, var(--bg) 100%);
       color: var(--text);
       min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
     a { color: inherit; text-decoration: none; }
@@ -52,270 +61,262 @@
       flex-direction: column;
     }
 
+    /* الشريط العلوي */
     .top-ribbon {
-      background: var(--primary-3);
+      background: var(--primary-dark);
       color: #ffffff;
       border-bottom: 3px solid var(--gold);
     }
 
     .container {
-      width: min(1180px, calc(100% - 32px));
+      width: min(1200px, calc(100% - 32px));
       margin-inline: auto;
     }
 
     .ribbon-inner {
-      min-height: 44px;
+      min-height: 48px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 16px;
       font-size: 14px;
-      color: rgba(255,255,255,0.88);
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.9);
     }
 
     .ribbon-inner .ribbon-item {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      white-space: nowrap;
     }
 
+    /* قسم الهيدر البطل */
     .hero {
-      padding: 36px 0 26px;
+      padding: 50px 0 40px;
       position: relative;
       overflow: hidden;
+      color: #fff;
+      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+      border-bottom-left-radius: 40px;
+      border-bottom-right-radius: 40px;
+      box-shadow: var(--shadow-md);
     }
 
     .hero::before {
       content: "";
       position: absolute;
       inset: 0;
-      background:
-        linear-gradient(135deg, rgba(15,47,87,0.95), rgba(21,72,118,0.92)),
-        repeating-linear-gradient(45deg, transparent 0 16px, rgba(255,255,255,0.035) 16px 17px);
-      border-bottom-left-radius: 48px;
-      border-bottom-right-radius: 48px;
-      z-index: -2;
-    }
-
-    .hero::after {
-      content: "";
-      position: absolute;
-      left: -120px;
-      top: 12px;
-      width: 360px;
-      height: 360px;
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 50%;
-      z-index: -1;
+      background: repeating-linear-gradient(45deg, transparent 0 20px, rgba(255, 255, 255, 0.02) 20px 21px);
+      pointer-events: none;
     }
 
     .brand-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 24px;
-      color: #fff;
+      gap: 30px;
+      position: relative;
+      z-index: 2;
     }
 
     .brand {
       display: flex;
       align-items: center;
-      gap: 18px;
+      gap: 20px;
     }
 
     .brand-mark {
-      width: 78px;
-      height: 78px;
-      border-radius: 22px;
-      background: linear-gradient(145deg, #ffffff, #eaf0f7);
+      width: 85px;
+      height: 85px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
       color: var(--primary);
       display: grid;
       place-items: center;
-      box-shadow: 0 14px 35px rgba(0,0,0,0.18);
-      border: 3px solid rgba(198,154,69,0.55);
-      flex: 0 0 auto;
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+      border: 3px solid var(--gold);
+      flex-shrink: 0;
     }
 
-    .brand-mark i { font-size: 34px; }
+    .brand-mark i { font-size: 38px; color: var(--primary); }
 
     .brand-text .eyebrow {
-      margin: 0 0 6px;
-      color: rgba(255,255,255,0.82);
-      font-weight: 700;
-      letter-spacing: 0.2px;
+      margin: 0 0 4px;
+      color: var(--gold-light);
+      font-weight: 800;
+      font-size: 15px;
+      letter-spacing: 0.5px;
     }
 
     .brand-text h1 {
       margin: 0;
-      font-size: clamp(25px, 4vw, 43px);
-      line-height: 1.25;
+      font-size: clamp(26px, 4.5vw, 40px);
+      line-height: 1.2;
       font-weight: 900;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
 
     .brand-text .sub-title {
-      margin: 8px 0 0;
-      color: rgba(255,255,255,0.86);
-      font-size: 17px;
+      margin: 6px 0 0;
+      color: rgba(255, 255, 255, 0.85);
+      font-size: 16px;
       font-weight: 500;
     }
 
+    /* كبسولة حالة النظام */
     .status-pill {
       display: inline-flex;
       align-items: center;
-      gap: 10px;
-      padding: 12px 16px;
+      gap: 12px;
+      padding: 12px 20px;
       border-radius: 999px;
-      background: rgba(255,255,255,0.12);
-      border: 1px solid rgba(255,255,255,0.20);
-      color: #fff;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
       font-weight: 700;
-      backdrop-filter: blur(8px);
-      white-space: nowrap;
+      font-size: 14px;
+      backdrop-filter: blur(10px);
     }
 
     .status-dot {
-      width: 11px;
-      height: 11px;
+      width: 12px;
+      height: 12px;
       border-radius: 50%;
-      background: #fbbf24;
-      box-shadow: 0 0 0 6px rgba(251,191,36,0.16);
+      background: #f59e0b;
+      box-shadow: 0 0 0 6px rgba(245, 158, 11, 0.2);
+      position: relative;
     }
 
     .status-dot.ready {
-      background: #22c55e;
-      box-shadow: 0 0 0 6px rgba(34,197,94,0.16);
+      background: var(--green);
+      box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.2);
     }
 
+    /* الجسم الرئيسي للموقع */
     main {
       flex: 1;
-      padding: 0 0 38px;
+      padding: 0 0 50px;
     }
 
     .search-panel {
-      margin-top: -20px;
+      margin-top: -30px;
       position: relative;
-      z-index: 2;
+      z-index: 10;
     }
 
     .panel-card {
       background: var(--card);
       border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      border: 1px solid rgba(220,227,238,0.94);
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--line);
       overflow: hidden;
     }
 
     .panel-head {
-      padding: 26px 30px;
+      padding: 25px 35px;
       border-bottom: 1px solid var(--line);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
-      background:
-        linear-gradient(90deg, rgba(15,47,87,0.06), rgba(198,154,69,0.06)),
-        #fff;
+      gap: 20px;
+      background: linear-gradient(90deg, rgba(15, 47, 87, 0.02) 0%, rgba(198, 154, 69, 0.02) 100%);
     }
 
     .panel-title {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 16px;
     }
 
     .panel-title-icon {
-      width: 48px;
-      height: 48px;
+      width: 52px;
+      height: 52px;
       border-radius: 16px;
       display: grid;
       place-items: center;
       color: var(--primary);
-      background: rgba(15,47,87,0.09);
-      font-size: 20px;
+      background: rgba(15, 47, 87, 0.07);
+      font-size: 22px;
     }
 
     .panel-title h2 {
       margin: 0;
-      font-size: 24px;
-      font-weight: 900;
-      color: var(--primary-3);
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--primary-dark);
     }
 
     .panel-title p {
       margin: 4px 0 0;
       color: var(--muted);
-      font-weight: 500;
+      font-size: 14px;
     }
 
     .service-badge {
-      border: 1px solid rgba(22,129,95,0.18);
+      border: 1px solid rgba(16, 185, 129, 0.2);
       color: var(--green);
-      background: rgba(22,129,95,0.08);
-      padding: 10px 14px;
+      background: rgba(16, 185, 129, 0.05);
+      padding: 10px 16px;
       border-radius: 14px;
-      font-weight: 800;
+      font-weight: 700;
+      font-size: 14px;
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      white-space: nowrap;
     }
 
-    .panel-body {
-      padding: 30px;
-    }
+    .panel-body { padding: 35px; }
 
+    /* حقول الإدخال والنموذج */
     .form-grid {
       display: grid;
-      grid-template-columns: minmax(230px, 0.9fr) minmax(280px, 1.35fr) auto;
-      gap: 16px;
-      align-items: end;
+      grid-template-columns: 1fr 1.3fr auto;
+      gap: 20px;
+      align-items: flex-end;
     }
 
     .field label {
       display: block;
-      margin-bottom: 9px;
+      margin-bottom: 10px;
       font-size: 15px;
-      color: var(--primary-3);
-      font-weight: 800;
+      color: var(--primary-dark);
+      font-weight: 700;
     }
 
-    .input-wrap, .select-wrap {
-      position: relative;
-    }
+    .input-wrap, .select-wrap { position: relative; }
 
-    .input-wrap i, .select-wrap i {
+    .input-wrap i, .select-wrap i:not(.fa-chevron-down) {
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
       right: 18px;
-      color: var(--primary-2);
-      opacity: 0.8;
+      color: var(--primary);
+      font-size: 18px;
+      opacity: 0.7;
       pointer-events: none;
-    }
-
-    input, select, button {
-      font-family: inherit;
     }
 
     .control {
       width: 100%;
-      height: 56px;
-      border: 1px solid #ccd6e6;
+      height: 58px;
+      border: 2px solid #cbd5e1;
       border-radius: 16px;
       outline: none;
       background: #fff;
       color: var(--text);
       font-size: 16px;
       font-weight: 600;
-      padding: 0 50px 0 18px;
-      transition: border 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+      padding: 0 52px 0 20px;
+    }
+
+    .control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(15, 47, 87, 0.1);
+      background: #fafcff;
     }
 
     select.control {
       appearance: none;
       cursor: pointer;
-      padding-left: 45px;
     }
 
     .select-arrow {
@@ -325,170 +326,166 @@
       transform: translateY(-50%);
       color: var(--muted);
       pointer-events: none;
+      font-size: 14px;
     }
 
-    .control:focus {
-      border-color: var(--primary-2);
-      box-shadow: 0 0 0 4px rgba(21,72,118,0.12);
-      background: #fbfdff;
-    }
-
+    /* زِر البحث بتأثير أنيق */
     .submit-btn {
-      height: 56px;
-      min-width: 174px;
+      height: 58px;
+      min-width: 180px;
       border: 0;
       border-radius: 16px;
       color: #fff;
-      background: linear-gradient(135deg, var(--primary), var(--primary-2));
-      box-shadow: 0 12px 24px rgba(15,47,87,0.20);
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      box-shadow: 0 8px 20px rgba(15, 47, 87, 0.2);
       font-size: 17px;
-      font-weight: 900;
+      font-weight: 700;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 10px;
-      transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
     }
 
-    .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 16px 30px rgba(15,47,87,0.26); }
-    .submit-btn:disabled { opacity: 0.62; cursor: not-allowed; transform: none; }
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 25px rgba(15, 47, 87, 0.3);
+    }
+    .submit-btn:active { transform: translateY(0); }
+    .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
+    /* اختصارات البحث السريع */
     .quick-actions {
-      margin-top: 18px;
+      margin-top: 25px;
       display: flex;
-      gap: 10px;
+      gap: 12px;
       flex-wrap: wrap;
     }
 
     .quick-chip {
       border: 1px solid var(--line);
       background: #f8fafc;
-      color: var(--primary-3);
-      padding: 9px 13px;
+      color: var(--primary);
+      padding: 8px 16px;
       border-radius: 999px;
-      font-size: 14px;
-      font-weight: 800;
+      font-size: 13px;
+      font-weight: 700;
       display: inline-flex;
       align-items: center;
       gap: 8px;
     }
 
+    /* رسائل التنبيه والخطأ والنجاح */
     .message {
-      margin-top: 20px;
-      border-radius: 18px;
-      padding: 16px 18px;
+      margin-top: 25px;
+      border-radius: 16px;
+      padding: 18px 22px;
       display: none;
-      align-items: flex-start;
-      gap: 12px;
+      align-items: center;
+      gap: 14px;
       font-weight: 700;
-      line-height: 1.7;
+      line-height: 1.6;
+      font-size: 15px;
     }
 
-    .message.show { display: flex; }
+    .message.show { display: flex; animation: fadeIn 0.3s ease; }
     .message.info { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
     .message.error { background: #fff1f2; color: #b42318; border: 1px solid #fecdd3; }
     .message.warning { background: #fffbeb; color: #92400e; border: 1px solid #fde68a; }
     .message.success { background: #ecfdf5; color: #047857; border: 1px solid #bbf7d0; }
 
+    /* كروت عرض النتائج والمطابقات */
     .results-section {
-      margin-top: 28px;
+      margin-top: 35px;
       display: none;
     }
-
     .results-section.show { display: block; }
 
     .result-card {
       background: #fff;
       border-radius: var(--radius);
       border: 1px solid var(--line);
-      box-shadow: var(--shadow);
+      box-shadow: var(--shadow-lg);
       overflow: hidden;
     }
 
     .result-top {
-      background:
-        linear-gradient(135deg, rgba(15,47,87,0.98), rgba(21,72,118,0.94)),
-        repeating-linear-gradient(45deg, rgba(255,255,255,0.03) 0 12px, transparent 12px 24px);
+      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
       color: #fff;
-      padding: 26px 30px;
+      padding: 30px 35px;
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
+      align-items: center;
       gap: 20px;
       border-bottom: 4px solid var(--gold);
     }
 
     .student-block h3 {
-      margin: 0 0 9px;
-      font-size: clamp(23px, 4vw, 34px);
+      margin: 0 0 10px;
+      font-size: clamp(22px, 4vw, 32px);
       font-weight: 900;
-      line-height: 1.3;
     }
 
     .student-meta {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
-      color: rgba(255,255,255,0.88);
-      font-weight: 700;
+      gap: 12px;
     }
 
     .student-meta span {
       display: inline-flex;
       align-items: center;
-      gap: 7px;
-      background: rgba(255,255,255,0.10);
-      border: 1px solid rgba(255,255,255,0.16);
-      padding: 9px 12px;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 8px 16px;
       border-radius: 999px;
+      font-size: 14px;
+      font-weight: 600;
     }
 
     .status-large {
       display: inline-flex;
       align-items: center;
-      justify-content: center;
       gap: 10px;
-      padding: 13px 18px;
-      border-radius: 18px;
-      background: rgba(255,255,255,0.12);
-      border: 1px solid rgba(255,255,255,0.18);
+      padding: 14px 24px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       font-size: 18px;
-      font-weight: 900;
-      white-space: nowrap;
+      font-weight: 800;
     }
+    .status-large.pass { color: #34d399; border-color: rgba(52, 211, 153, 0.3); }
+    .status-large.fail { color: #f87171; border-color: rgba(248, 113, 113, 0.3); }
 
-    .status-large.pass { color: #dcfce7; }
-    .status-large.fail { color: #fee2e2; }
-
+    /* شبكة الملخص (المجموع، النسبة، التقدير) */
     .summary-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 14px;
-      padding: 24px 30px 0;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      padding: 30px 35px 0;
     }
 
     .summary-card {
       border: 1px solid var(--line);
-      border-radius: 20px;
-      padding: 18px;
-      background: linear-gradient(180deg, #fff, #f9fbfe);
+      border-radius: 18px;
+      padding: 20px;
+      background: linear-gradient(180deg, #fff 0%, #f8fafc 100%);
       display: flex;
       align-items: center;
-      gap: 14px;
-      min-height: 96px;
+      gap: 16px;
     }
 
     .summary-icon {
-      width: 50px;
-      height: 50px;
+      width: 56px;
+      height: 56px;
       border-radius: 16px;
       display: grid;
       place-items: center;
       color: var(--primary);
-      background: rgba(15,47,87,0.09);
-      flex: 0 0 auto;
-      font-size: 19px;
+      background: rgba(15, 47, 87, 0.06);
+      font-size: 22px;
+      flex-shrink: 0;
     }
 
     .summary-card small {
@@ -501,146 +498,153 @@
 
     .summary-card strong {
       display: block;
-      color: var(--primary-3);
-      font-size: 25px;
+      color: var(--primary-dark);
+      font-size: 26px;
       font-weight: 900;
-      line-height: 1.2;
     }
 
+    /* جدول المواد والدرجات */
     .table-wrap {
-      padding: 24px 30px 30px;
+      padding: 30px 35px;
       overflow-x: auto;
     }
 
     table {
       width: 100%;
-      border-collapse: collapse;
-      min-width: 720px;
+      border-collapse: separate;
+      border-spacing: 0;
+      min-width: 600px;
       border: 1px solid var(--line);
-      border-radius: 18px;
+      border-radius: 16px;
       overflow: hidden;
     }
 
     thead th {
-      background: #eef3f9;
-      color: var(--primary-3);
+      background: #f1f5f9;
+      color: var(--primary-dark);
       text-align: right;
-      padding: 16px 18px;
+      padding: 16px 20px;
       font-size: 15px;
-      font-weight: 900;
-      border-bottom: 1px solid var(--line);
+      font-weight: 800;
+      border-bottom: 2px solid var(--line);
     }
 
     tbody td {
-      padding: 15px 18px;
-      border-bottom: 1px solid #edf1f6;
-      color: #27364f;
-      font-weight: 700;
-      vertical-align: middle;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--line);
+      color: var(--text);
+      font-weight: 600;
+      font-size: 15px;
     }
 
-    tbody tr:nth-child(even) td { background: #fbfdff; }
+    tbody tr:nth-child(even) td { background: #f8fafc; }
     tbody tr:last-child td { border-bottom: 0; }
 
     .degree-value {
       display: inline-flex;
-      min-width: 76px;
+      min-width: 70px;
       justify-content: center;
-      padding: 8px 12px;
+      padding: 6px 14px;
       border-radius: 999px;
-      background: #f1f5f9;
-      color: var(--primary-3);
-      font-weight: 900;
+      background: rgba(15, 47, 87, 0.05);
+      color: var(--primary-dark);
+      font-weight: 800;
     }
 
+    /* الملاحظات والأزرار التفاعلية */
     .notes-box {
-      margin: 0 30px 30px;
+      margin: 0 35px 30px;
       border: 1px solid #fde68a;
       background: #fffbeb;
-      color: #78350f;
-      border-radius: 18px;
-      padding: 16px 18px;
+      color: #92400e;
+      border-radius: 16px;
+      padding: 18px;
       font-weight: 700;
-      line-height: 1.8;
       display: flex;
       gap: 12px;
+      align-items: flex-start;
     }
 
     .action-row {
-      padding: 0 30px 30px;
+      padding: 0 35px 35px;
       display: flex;
-      gap: 12px;
+      gap: 15px;
       flex-wrap: wrap;
     }
 
     .secondary-btn {
-      min-height: 48px;
-      border: 1px solid var(--line);
+      min-height: 50px;
+      border: 2px solid var(--line);
       background: #fff;
-      color: var(--primary-3);
+      color: var(--primary-dark);
       border-radius: 14px;
-      padding: 0 18px;
-      font-weight: 900;
+      padding: 0 24px;
+      font-weight: 700;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 10px;
-      transition: transform 0.2s ease, border-color 0.2s ease;
     }
 
-    .secondary-btn:hover { transform: translateY(-2px); border-color: var(--primary-2); }
+    .secondary-btn:hover {
+      background: #f8fafc;
+      border-color: var(--primary);
+      color: var(--primary);
+    }
 
+    /* البحث المتعدد بالأسماء المتشابهة */
     .matches-grid {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
     }
 
     .match-card {
       background: #fff;
       border: 1px solid var(--line);
-      border-radius: 20px;
-      padding: 18px;
+      border-radius: 16px;
+      padding: 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 14px;
-      box-shadow: 0 12px 32px rgba(15,47,87,0.07);
+      gap: 20px;
+      box-shadow: var(--shadow-sm);
     }
 
     .match-card h4 {
-      margin: 0 0 7px;
-      font-size: 18px;
-      font-weight: 900;
-      color: var(--primary-3);
+      margin: 0 0 6px;
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--primary-dark);
     }
 
     .match-card p {
       margin: 0;
       color: var(--muted);
-      font-weight: 700;
+      font-size: 14px;
       display: flex;
-      flex-wrap: wrap;
-      gap: 8px 14px;
+      gap: 15px;
     }
 
     .tiny-btn {
       border: 0;
-      border-radius: 13px;
-      padding: 11px 14px;
+      border-radius: 12px;
+      padding: 10px 16px;
       cursor: pointer;
       color: #fff;
       background: var(--primary);
-      font-weight: 900;
+      font-weight: 700;
       white-space: nowrap;
     }
+    .tiny-btn:hover { background: var(--primary-light); }
 
+    /* الفوتر */
     .footer {
       margin-top: auto;
-      padding: 22px 0;
-      background: #0b2442;
-      color: rgba(255,255,255,0.80);
+      padding: 25px 0;
+      background: var(--primary-dark);
+      color: rgba(255, 255, 255, 0.75);
       border-top: 3px solid var(--gold);
     }
 
@@ -648,91 +652,94 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
-      font-weight: 700;
+      gap: 20px;
+      font-weight: 600;
       font-size: 14px;
     }
 
-    .footer-inner span {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-
+    /* لودر التحميل الدائري */
     .loader {
-      width: 18px;
-      height: 18px;
+      width: 20px;
+      height: 20px;
       border-radius: 50%;
-      border: 3px solid rgba(15,47,87,0.16);
-      border-top-color: var(--primary);
-      animation: spin 0.9s linear infinite;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      animation: spin 0.8s linear infinite;
       display: inline-block;
     }
 
     @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
+    /* الاستجابة للهواتف والشاشات الصغيرة */
     @media (max-width: 900px) {
-      .brand-row, .panel-head, .result-top, .footer-inner { flex-direction: column; align-items: flex-start; }
+      .brand-row, .panel-head, .result-top, .footer-inner { flex-direction: column; align-items: flex-start; text-align: right; }
       .form-grid { grid-template-columns: 1fr; }
       .submit-btn { width: 100%; }
       .summary-grid { grid-template-columns: 1fr; }
       .matches-grid { grid-template-columns: 1fr; }
-      .status-pill { white-space: normal; }
-      .ribbon-inner { flex-direction: column; align-items: flex-start; padding: 10px 0; }
+      .ribbon-inner { flex-direction: column; align-items: flex-start; gap: 8px; }
+      .status-pill { margin-top: 10px; }
     }
 
     @media (max-width: 560px) {
-      .container { width: min(100% - 22px, 1180px); }
-      .hero { padding-top: 24px; }
-      .brand { align-items: flex-start; }
-      .brand-mark { width: 62px; height: 62px; border-radius: 18px; }
-      .brand-mark i { font-size: 27px; }
-      .panel-head, .panel-body, .result-top, .summary-grid, .table-wrap, .action-row { padding-inline: 18px; }
-      .notes-box { margin-inline: 18px; }
-      .control, .submit-btn { height: 54px; }
+      .panel-head, .panel-body, .result-top, .summary-grid, .table-wrap, .action-row { padding: 20px; }
+      .notes-box { margin-inline: 20px; }
     }
 
+    /* إعدادات الطباعة الاحترافية للشهادات */
     @media print {
-      body { background: #fff; }
-      .top-ribbon, .hero, .search-panel, .footer, .action-row, .message { display: none !important; }
+      body { background: #fff; color: #000; }
+      .top-ribbon, .hero, .search-panel, .footer, .action-row, .message, .quick-actions { display: none !important; }
       main { padding: 0; }
       .results-section { display: block !important; margin: 0; }
-      .container { width: 100%; }
-      .result-card { box-shadow: none; border-radius: 0; border: 0; }
-      .result-top { border-radius: 0; }
-      table { min-width: 0; }
+      .container { width: 100%; max-width: 100%; }
+      .result-card { box-shadow: none; border: 2px solid #000; border-radius: 0; }
+      .result-top { background: #fff !important; color: #000 !important; border-bottom: 2px solid #000; padding: 20px; }
+      .student-meta span { border: 1px solid #000 !important; color: #000 !important; background: transparent !important; }
+      .status-large { border: 2px solid #000 !important; color: #000 !important; background: transparent !important; }
+      .summary-card { border: 1px solid #000 !important; background: #fff !important; }
+      .summary-icon { display: none !important; }
+      table { border: 1px solid #000 !important; min-width: 0 !important; }
+      thead th { background: #eee !important; border-bottom: 1px solid #000 !important; color: #000 !important; }
+      tbody td { border-bottom: 1px solid #eee !important; }
     }
   </style>
 </head>
 <body>
   <div class="site-shell">
     <header>
+      <!-- الشريط العلوي المستوحى من الوزارة -->
       <div class="top-ribbon">
         <div class="container ribbon-inner">
-          <div class="ribbon-item"><i class="fa-solid fa-shield-halved"></i> منظومة النتائج الإلكترونية</div>
-          <div class="ribbon-item"><i class="fa-solid fa-calendar-check"></i> خدمة الاستعلام عن الدرجات</div>
+          <div class="ribbon-item"><i class="fa-solid fa-shield-halved"></i> منظومة الامتحانات الإلكترونية</div>
+          <div class="ribbon-item"><i class="fa-solid fa-calendar-check"></i> العام الدراسي الحالي</div>
         </div>
       </div>
 
+      <!-- الهيدر باسم مدرسة الفارق -->
       <section class="hero">
         <div class="container brand-row">
           <div class="brand">
-            <div class="brand-mark" aria-hidden="true"><i class="fa-solid fa-building-columns"></i></div>
+            <div class="brand-mark" aria-hidden="true">
+              <i class="fa-solid fa-building-columns"></i>
+            </div>
             <div class="brand-text">
-              <p class="eyebrow">إدارة شؤون الطلاب</p>
-              <h1>بوابة نتائج الصفين الأول والثاني الثانوي</h1>
-              <p class="sub-title">استعلام فوري عن درجات الطالب برقم الجلوس أو الاسم</p>
+              <p class="eyebrow">وزارة التربية والتعليم والتعليم الفني</p>
+              <h1>مدرسة الفارق الثانوية بنين</h1>
+              <p class="sub-title">بوابة الاستعلام عن نتائج الصفين الأول والثاني الثانوي</p>
             </div>
           </div>
           <div class="status-pill" id="systemStatus">
             <span class="status-dot" id="statusDot"></span>
-            <span id="statusText">جاري تجهيز الخدمة</span>
+            <span id="statusText">جاري تهيئة قواعد البيانات</span>
           </div>
         </div>
       </section>
     </header>
 
     <main>
+      <!-- لوحة البحث والاستعلام -->
       <section class="search-panel">
         <div class="container">
           <div class="panel-card">
@@ -740,11 +747,11 @@
               <div class="panel-title">
                 <div class="panel-title-icon"><i class="fa-solid fa-magnifying-glass-chart"></i></div>
                 <div>
-                  <h2>الاستعلام عن النتيجة</h2>
-                  <p>اختر الصف ثم أدخل رقم الجلوس أو اسم الطالب.</p>
+                  <h2>الاستعلام السريع عن النتائج</h2>
+                  <p>اختر المرحلة الدراسية ثم اكتب اسم الطالب أو رقم جلوسه بدقة.</p>
                 </div>
               </div>
-              <div class="service-badge"><i class="fa-solid fa-circle-check"></i> خدمة إلكترونية</div>
+              <div class="service-badge"><i class="fa-solid fa-circle-check"></i> خدمة فورية معتمدة</div>
             </div>
 
             <div class="panel-body">
@@ -763,71 +770,61 @@
                   </div>
 
                   <div class="field">
-                    <label for="searchInput">رقم الجلوس أو اسم الطالب</label>
+                    <label for="searchInput">بيانات الطالب المعني بالبحث</label>
                     <div class="input-wrap">
                       <i class="fa-regular fa-id-card"></i>
-                      <input class="control" id="searchInput" type="text" placeholder="اكتب رقم الجلوس أو الاسم" required />
+                      <input class="control" id="searchInput" type="text" placeholder="أدخل رقم الجلوس أو اسم الطالب رباعياً" required />
                     </div>
                   </div>
 
                   <button class="submit-btn" id="searchBtn" type="submit">
                     <i class="fa-solid fa-search"></i>
-                    عرض النتيجة
+                    عرض النتيجة الآن
                   </button>
                 </div>
               </form>
 
-              <div class="quick-actions" aria-label="معلومات الخدمة">
-                <span class="quick-chip"><i class="fa-solid fa-user-check"></i> البحث بالاسم</span>
-                <span class="quick-chip"><i class="fa-solid fa-hashtag"></i> البحث برقم الجلوس</span>
-                <span class="quick-chip"><i class="fa-solid fa-file-shield"></i> نتيجة تفصيلية</span>
+              <div class="quick-actions">
+                <span class="quick-chip"><i class="fa-solid fa-user-check"></i> بحث ذكي بالاسم الثلاثي فأكثر</span>
+                <span class="quick-chip"><i class="fa-solid fa-hashtag"></i> بحث برقم المقعد الخاص بالطالب</span>
+                <span class="quick-chip"><i class="fa-solid fa-file-shield"></i> تقرير درجات تفصيلي بالكامل</span>
               </div>
 
               <div class="message info show" id="messageBox">
                 <i class="fa-solid fa-circle-info"></i>
-                <span>جاري تحميل بيانات النتائج...</span>
+                <span>جاري ربط الخادم بالملفات، يرجى الانتظار ثوانٍ معدودة...</span>
               </div>
             </div>
           </div>
         </div>
       </section>
 
+      <!-- حاوية النتائج التفاعلية الديناميكية -->
       <section class="results-section" id="resultsSection">
         <div class="container" id="resultsContainer"></div>
       </section>
     </main>
 
+    <!-- الفوتر المعدل باسم المدرسة -->
     <footer class="footer">
       <div class="container footer-inner">
-        <span><i class="fa-solid fa-lock"></i> بوابة نتائج المرحلة الثانوية</span>
-        <span><i class="fa-regular fa-copyright"></i> جميع الحقوق محفوظة</span>
+        <span><i class="fa-solid fa-lock"></i> الحقوق محفوظة لموقع مدرسة الفارق الثانوية بنين</span>
+        <span><i class="fa-regular fa-copyright"></i> جميع الحقوق محفوظة لمركز المعلومات بالمدرسة</span>
       </div>
     </footer>
   </div>
 
   <script>
     const DATABASE_FILES = {
-      first: {
-        title: "الصف الأول الثانوي",
-        file: "1sanawe.xlsx"
-      },
-      second: {
-        title: "الصف الثاني الثانوي",
-        file: "2sanawe.xlsx"
-      }
+      first: { title: "الصف الأول الثانوي", file: "1sanawe.xlsx" },
+      second: { title: "الصف الثاني الثانوي", file: "2sanawe.xlsx" }
     };
 
     const state = {
       ready: false,
       loading: false,
-      data: {
-        first: [],
-        second: []
-      },
-      fields: {
-        first: {},
-        second: {}
-      }
+      data: { first: [], second: [] },
+      fields: { first: {}, second: {} }
     };
 
     const elements = {
@@ -860,25 +857,24 @@
       elements.gradeSelect.addEventListener("change", () => {
         elements.searchInput.value = "";
         clearResults();
-        showMessage("info", `تم اختيار ${DATABASE_FILES[elements.gradeSelect.value].title}.`);
+        showMessage("info", `تم الانتقال إلى قاعدة بيانات ${DATABASE_FILES[elements.gradeSelect.value].title}.`);
         elements.searchInput.focus();
       });
     });
 
     async function loadAllDatabases() {
       setLoading(true);
-      showMessage("info", "جاري تحميل بيانات النتائج...");
-
+      showMessage("info", "جاري قراءة وتحميل جداول البيانات المعتمدة...");
       try {
         await Promise.all(Object.keys(DATABASE_FILES).map(loadDatabase));
         state.ready = true;
         setSystemReady(true);
-        showMessage("success", "الخدمة متاحة الآن. يمكنك الاستعلام عن النتيجة.");
+        showMessage("success", "تم ربط قواعد البيانات بنجاح. البوابة جاهزة للبحث الفوري.");
       } catch (error) {
         console.error(error);
         state.ready = false;
         setSystemReady(false);
-        showMessage("error", "تعذر تحميل قاعدة بيانات النتائج. يرجى المحاولة لاحقًا أو التواصل مع الإدارة المختصة.");
+        showMessage("error", "حدث خطأ أثناء تحميل ملفات الإكسيل. يرجى مراجعة وجود ملفات 1sanawe.xlsx و 2sanawe.xlsx في مسار الموقع.");
       } finally {
         setLoading(false);
       }
@@ -887,7 +883,6 @@
     async function loadDatabase(key) {
       const response = await fetch(DATABASE_FILES[key].file, { cache: "no-store" });
       if (!response.ok) throw new Error(`Cannot load ${DATABASE_FILES[key].file}`);
-
       const arrayBuffer = await response.arrayBuffer();
       const workbook = XLSX.read(arrayBuffer, { type: "array", cellDates: false });
       const parsed = parseWorkbook(workbook);
@@ -935,8 +930,7 @@
     function findFieldKey(keys, candidates) {
       const normalizedCandidates = candidates.map(normalizeHeader);
       return keys.find(key => normalizedCandidates.includes(normalizeHeader(key))) ||
-             keys.find(key => normalizedCandidates.some(candidate => normalizeHeader(key).includes(candidate))) ||
-             "";
+             keys.find(key => normalizedCandidates.some(candidate => normalizeHeader(key).includes(candidate))) || "";
     }
 
     function handleSearch(event) {
@@ -947,19 +941,19 @@
       const query = elements.searchInput.value.trim();
 
       if (!state.ready) {
-        showMessage("warning", "الخدمة ما زالت قيد التجهيز. يرجى الانتظار لحظات.");
+        showMessage("warning", "الخدمة ما زالت قيد التجهيز من الخادم. يرجى الانتظار.");
         return;
       }
 
       if (!query) {
-        showMessage("warning", "يرجى إدخال رقم الجلوس أو اسم الطالب.");
+        showMessage("warning", "يرجى كتابة الاسم أو رقم الجلوس أولاً لإجراء البحث.");
         return;
       }
 
       const matches = searchStudents(gradeKey, query);
 
       if (!matches.length) {
-        showMessage("error", "لم يتم العثور على نتيجة مطابقة للبيانات المدخلة.");
+        showMessage("error", "عذراً، لم نجد أي طالب يطابق هذه البيانات في السجلات الحالية.");
         return;
       }
 
@@ -968,7 +962,7 @@
         renderStudentResult(gradeKey, matches[0]);
       } else {
         renderMatchesList(gradeKey, matches.slice(0, 12));
-        showMessage("success", `تم العثور على ${formatArabicNumber(matches.length)} نتيجة مطابقة. اختر الطالب المطلوب لعرض النتيجة.`);
+        showMessage("success", `تم العثور على ${formatArabicNumber(matches.length)} طلاب يتشابهون في نفس الاسم. اختر الطالب المقصود لمعاينة شهادته.`);
       }
     }
 
@@ -995,20 +989,21 @@
       const fields = state.fields[gradeKey];
       const html = `
         <div class="matches-grid">
-          ${matches.map((row, index) => {
+          ${matches.map((row) => {
             const name = displayValue(row[fields.name]);
             const seat = displayValue(row[fields.seat]);
             const group = displayValue(row[fields.branch] || row[fields.grade] || DATABASE_FILES[gradeKey].title);
+            const indexInMaster = state.data[gradeKey].indexOf(row);
             return `
               <article class="match-card">
                 <div>
                   <h4>${escapeHtml(name)}</h4>
                   <p>
-                    <span><i class="fa-solid fa-hashtag"></i> ${escapeHtml(seat)}</span>
-                    <span><i class="fa-solid fa-layer-group"></i> ${escapeHtml(group)}</span>
+                    <span><i class="fa-solid fa-hashtag"></i> رقم جلوس: ${escapeHtml(seat)}</span>
+                    <span><i class="fa-solid fa-layer-group"></i> الشُعبة: ${escapeHtml(group)}</span>
                   </p>
                 </div>
-                <button class="tiny-btn" type="button" onclick="renderStudentResult('${gradeKey}', state.data['${gradeKey}'][${state.data[gradeKey].indexOf(row)}])">عرض النتيجة</button>
+                <button class="tiny-btn" type="button" onclick="renderStudentResult('${gradeKey}', state.data['${gradeKey}'][${indexInMaster}])">إظهار النتيجة</button>
               </article>
             `;
           }).join("")}
@@ -1026,10 +1021,10 @@
       const seat = displayValue(row[fields.seat]);
       const grade = displayValue(row[fields.grade] || DATABASE_FILES[gradeKey].title);
       const branch = displayValue(row[fields.branch]);
-      const total = formatCell(row[fields.total], fields.total);
-      const percent = formatCell(row[fields.percent], fields.percent);
-      const rating = formatCell(row[fields.rating], fields.rating);
-      const status = formatCell(row[fields.status], fields.status);
+      const total = formatCell(row[fields.total]);
+      const percent = formatCell(row[fields.percent]);
+      const rating = formatCell(row[fields.rating]);
+      const status = formatCell(row[fields.status]);
       const notes = displayValue(row[fields.notes]);
       const isPass = !/راسب|غير ناجح|دور|غائب/i.test(String(status));
       const subjectRows = getSubjectRows(row, fields);
@@ -1041,37 +1036,37 @@
               <h3>${escapeHtml(name)}</h3>
               <div class="student-meta">
                 <span><i class="fa-solid fa-hashtag"></i> رقم الجلوس: ${escapeHtml(seat)}</span>
-                <span><i class="fa-solid fa-school"></i> ${escapeHtml(grade)}</span>
-                ${branch ? `<span><i class="fa-solid fa-layer-group"></i> ${escapeHtml(branch)}</span>` : ""}
+                <span><i class="fa-solid fa-school"></i> مدرسة الفارق الثانوية</span>
+                <span><i class="fa-solid fa-layer-group"></i> ${escapeHtml(grade)} ${branch ? ` - ${escapeHtml(branch)}` : ''}</span>
               </div>
             </div>
-            <div class="status-large ${isPass ? "pass" : "fail"}">
-              <i class="fa-solid ${isPass ? "fa-circle-check" : "fa-circle-xmark"}"></i>
-              ${escapeHtml(status || "تم إعلان النتيجة")}
+            <div class="status-large ${isPass ? 'pass' : 'fail'}">
+              <i class="fa-solid ${isPass ? 'fa-circle-check' : 'fa-circle-xmark'}"></i>
+              ${escapeHtml(status || "تم اعتماد النتيجة")}
             </div>
           </div>
 
           <div class="summary-grid">
             <div class="summary-card">
               <div class="summary-icon"><i class="fa-solid fa-calculator"></i></div>
-              <div><small>المجموع</small><strong>${escapeHtml(total)}</strong></div>
+              <div><small>المجموع الإجمالي</small><strong>${escapeHtml(total || '-')}</strong></div>
             </div>
             <div class="summary-card">
               <div class="summary-icon"><i class="fa-solid fa-percent"></i></div>
-              <div><small>النسبة</small><strong>${escapeHtml(percent)}</strong></div>
+              <div><small>النسبة المئوية</small><strong>${escapeHtml(percent || '-')}</strong></div>
             </div>
             <div class="summary-card">
               <div class="summary-icon"><i class="fa-solid fa-award"></i></div>
-              <div><small>التقدير</small><strong>${escapeHtml(rating)}</strong></div>
+              <div><small>التقدير العام</small><strong>${escapeHtml(rating || '-')}</strong></div>
             </div>
           </div>
 
           <div class="table-wrap">
-            <table aria-label="درجات الطالب">
+            <table>
               <thead>
                 <tr>
-                  <th>المادة</th>
-                  <th>الدرجة</th>
+                  <th>المادة الدراسية</th>
+                  <th>الدرجة المرصودة</th>
                 </tr>
               </thead>
               <tbody>
@@ -1085,16 +1080,11 @@
             </table>
           </div>
 
-          ${notes ? `
-            <div class="notes-box">
-              <i class="fa-solid fa-circle-exclamation"></i>
-              <div>${escapeHtml(notes)}</div>
-            </div>
-          ` : ""}
+          ${notes ? `<div class="notes-box"><i class="fa-solid fa-circle-exclamation"></i> <span>ملاحظة الإدارة: ${escapeHtml(notes)}</span></div>` : ""}
 
           <div class="action-row">
-            <button class="secondary-btn" type="button" onclick="window.print()"><i class="fa-solid fa-print"></i> طباعة النتيجة</button>
-            <button class="secondary-btn" type="button" onclick="resetSearch()"><i class="fa-solid fa-rotate-right"></i> استعلام جديد</button>
+            <button class="secondary-btn" type="button" onclick="window.print()"><i class="fa-solid fa-print"></i> طباعة هذه الشهادة</button>
+            <button class="secondary-btn" type="button" onclick="clearResults(); hideMessage();"><i class="fa-solid fa-rotate-right"></i> استعلام جديد</button>
           </div>
         </article>
       `;
@@ -1104,135 +1094,80 @@
       elements.resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
+    /* دوال معالجة البيانات المساعدة المكملة للملف */
     function getSubjectRows(row, fields) {
-      const excluded = new Set(Object.values(fields).filter(Boolean));
-      return Object.entries(row)
-        .filter(([key, value]) => !excluded.has(key) && hasValue(value))
-        .map(([key, value]) => ({ subject: key, value: formatCell(value, key) }));
+      const excludedKeys = Object.values(fields).map(v => String(v).trim());
+      const subjectRows = [];
+      Object.entries(row).forEach(([key, value]) => {
+        if (!excludedKeys.includes(key.trim()) && key.trim() !== "") {
+          subjectRows.push({ subject: key, value: value });
+        }
+      });
+      return subjectRows;
     }
 
-    function hasValue(value) {
-      return value !== null && value !== undefined && String(value).trim() !== "";
-    }
-
-    function formatCell(value, key = "") {
-      if (!hasValue(value)) return "—";
-      const label = String(key || "");
-
-      if (typeof value === "number") {
-        if (/النسبة|percent|percentage/i.test(label)) {
-          const percent = value <= 1 ? value * 100 : value;
-          return `${formatArabicNumber(percent, 2)}%`;
-        }
-        return formatArabicNumber(value, Number.isInteger(value) ? 0 : 2);
-      }
-
-      const text = String(value).trim();
-      const numeric = Number(text);
-      if (text !== "" && !Number.isNaN(numeric) && /^\d+(\.\d+)?$/.test(text)) {
-        if (/النسبة|percent|percentage/i.test(label)) {
-          const percent = numeric <= 1 ? numeric * 100 : numeric;
-          return `${formatArabicNumber(percent, 2)}%`;
-        }
-        return formatArabicNumber(numeric, Number.isInteger(numeric) ? 0 : 2);
-      }
-      return text;
+    function formatCell(value) {
+      return value === undefined || value === null ? "" : String(value).trim();
     }
 
     function displayValue(value) {
-      return hasValue(value) ? formatCell(value) : "";
+      return value === undefined || value === null ? "" : String(value).trim();
     }
 
-    function normalizeHeader(value) {
-      return normalizeArabic(value).replace(/\s+/g, " ").trim();
+    function escapeHtml(str) {
+      if (!str) return "";
+      return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
     }
 
-    function normalizeArabic(value) {
-      return toEnglishDigits(String(value || ""))
-        .replace(/[\u064B-\u065F\u0670]/g, "")
-        .replace(/[إأآا]/g, "ا")
-        .replace(/ى/g, "ي")
-        .replace(/ة/g, "ه")
-        .replace(/ؤ/g, "و")
-        .replace(/ئ/g, "ي")
-        .replace(/[ـ]/g, "")
-        .replace(/[^\u0600-\u06FFa-zA-Z0-9\s]/g, " ")
-        .replace(/\s+/g, " ")
-        .trim()
-        .toLowerCase();
+    function normalizeArabic(str) {
+      if (!str) return "";
+      return String(str).trim().replace(/[أإآأ]/g, "ا").replace(/ة/g, "ه").replace(/ى/g, "ي").replace(/[\u064B-\u0652]/g, "");
     }
 
-    function toEnglishDigits(value) {
-      return String(value || "")
-        .replace(/[٠-٩]/g, digit => "٠١٢٣٤٥٦٧٨٩".indexOf(digit))
-        .replace(/[۰-۹]/g, digit => "۰۱۲۳۴۵۶۷۸۹".indexOf(digit));
+    function normalizeHeader(str) {
+      if (!str) return "";
+      return String(str).toLowerCase().trim().replace(/\s+/g, "");
     }
 
-    function extractDigits(value) {
-      return toEnglishDigits(value).replace(/[^0-9]/g, "");
-    }
-
-    function formatArabicNumber(value, decimals = 0) {
-      const number = Number(value);
-      if (Number.isNaN(number)) return String(value ?? "");
-      return new Intl.NumberFormat("ar-EG", {
-        minimumFractionDigits: decimals && !Number.isInteger(number) ? 0 : 0,
-        maximumFractionDigits: decimals
-      }).format(number);
-    }
-
-    function showMessage(type, text) {
-      elements.messageBox.className = `message ${type} show`;
-      elements.messageBox.innerHTML = `<i class="fa-solid ${messageIcon(type)}"></i><span>${escapeHtml(text)}</span>`;
-    }
-
-    function hideMessage() {
-      elements.messageBox.classList.remove("show");
-    }
-
-    function messageIcon(type) {
-      return {
-        info: "fa-circle-info",
-        success: "fa-circle-check",
-        warning: "fa-triangle-exclamation",
-        error: "fa-circle-xmark"
-      }[type] || "fa-circle-info";
+    function extractDigits(str) {
+      if (str === undefined || str === null) return "";
+      const s = String(str).replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d));
+      return s.replace(/\D/g, "");
     }
 
     function setLoading(isLoading) {
       state.loading = isLoading;
       elements.searchBtn.disabled = isLoading;
-      elements.searchBtn.innerHTML = isLoading
-        ? `<span class="loader"></span> جاري التحميل`
-        : `<i class="fa-solid fa-search"></i> عرض النتيجة`;
+      if (isLoading) {
+        elements.searchBtn.innerHTML = '<span class="loader"></span> جاري التحميل...';
+      } else {
+        elements.searchBtn.innerHTML = '<i class="fa-solid fa-search"></i> عرض النتيجة الآن';
+      }
     }
 
     function setSystemReady(isReady) {
-      elements.statusDot.classList.toggle("ready", isReady);
-      elements.statusText.textContent = isReady ? "الخدمة متاحة الآن" : "الخدمة غير متاحة";
+      if (isReady) {
+        elements.statusDot.classList.add("ready");
+        elements.statusText.textContent = "المنظومة نشطة وجاهزة";
+      } else {
+        elements.statusDot.classList.remove("ready");
+        elements.statusText.textContent = "فشل الاتصال بملفات إكسيل";
+      }
     }
 
-    function clearResults() {
-      elements.resultsContainer.innerHTML = "";
-      elements.resultsSection.classList.remove("show");
+    function showMessage(type, msg) {
+      elements.messageBox.className = `message ${type} show`;
+      elements.messageBox.querySelector("span").textContent = msg;
+      const icon = elements.messageBox.querySelector("i");
+      if (type === "success") icon.className = "fa-solid fa-circle-check";
+      else if (type === "error") icon.className = "fa-solid fa-circle-xmark";
+      else if (type === "warning") icon.className = "fa-solid fa-triangle-exclamation";
+      else icon.className = "fa-solid fa-circle-info";
     }
 
-    function resetSearch() {
-      elements.searchInput.value = "";
-      clearResults();
-      showMessage("success", "يمكنك إجراء استعلام جديد الآن.");
-      elements.searchInput.focus();
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-
-    function escapeHtml(value) {
-      return String(value ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-    }
+    function hideMessage() { elements.messageBox.classList.remove("show"); }
+    function clearResults() { elements.resultsContainer.innerHTML = ""; elements.resultsSection.classList.remove("show"); }
+    function formatArabicNumber(num) { return Number(num).toLocaleString("ar-EG"); }
   </script>
 </body>
 </html>
