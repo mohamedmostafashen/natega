@@ -10,6 +10,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 :root {
   /* ── Brick / Terracotta palette ── */
@@ -892,43 +894,114 @@ document.getElementById('searchInput').addEventListener('keydown',function(e){if
 
 // ── PRINT HELPERS ──
 function printHTMLDocument(html,title){
-  var old=document.getElementById('printFrame');
-  if(old) old.remove();
-
-  var iframe=document.createElement('iframe');
-  iframe.id='printFrame';
-  iframe.setAttribute('aria-hidden','true');
-  iframe.style.position='fixed';
-  iframe.style.left='-10000px';
-  iframe.style.top='0';
-  iframe.style.width='0';
-  iframe.style.height='0';
-  iframe.style.border='0';
-  document.body.appendChild(iframe);
-
-  var doc=iframe.contentWindow.document;
-  doc.open();
-  doc.write(html);
-  doc.close();
-
-  var triggerPrint=function(){
-    try{ doc.title=title||''; }catch(e){}
-    setTimeout(function(){
-      iframe.contentWindow.focus();
-      iframe.contentWindow.print();
-      setTimeout(function(){
-        if(iframe&&iframe.parentNode) iframe.parentNode.removeChild(iframe);
-      },800);
-    },250);
-  };
-
-  if(iframe.contentWindow.document.readyState==='complete'){
-    triggerPrint();
-  }else{
-    iframe.onload=triggerPrint;
-  }
+  // Legacy fallback only. The main buttons now download PDFs directly without opening print preview.
+  downloadHTMLAsPDF(html,title==='شهادة الطالب'?'شهادة الطالب.pdf':'نتيجة الطالب.pdf',title==='شهادة الطالب'?'landscape':'portrait',title==='شهادة الطالب'?'.sheet':'body');
 }
 
+function loadScriptOnce(src,id){
+  return new Promise(function(resolve,reject){
+    if(document.getElementById(id)){resolve();return;}
+    var s=document.createElement('script');
+    s.id=id;s.src=src;s.onload=resolve;s.onerror=reject;
+    document.head.appendChild(s);
+  });
+}
+
+function ensurePdfTools(){
+  var p=Promise.resolve();
+  if(!window.html2canvas){
+    p=p.then(function(){return loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js','html2canvasRuntime');});
+  }
+  if(!window.jspdf){
+    p=p.then(function(){return loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js','jspdfRuntime');});
+  }
+  return p;
+}
+
+function downloadHTMLAsPDF(html,fileName,orientation,selector){
+  return ensurePdfTools().then(function(){
+    return new Promise(function(resolve,reject){
+      var old=document.getElementById('pdfDownloadFrame');
+      if(old) old.remove();
+
+      var isLand=orientation==='landscape';
+      var frameW=isLand?1123:794;
+      var frameH=isLand?794:1123;
+
+      var iframe=document.createElement('iframe');
+      iframe.id='pdfDownloadFrame';
+      iframe.setAttribute('aria-hidden','true');
+      iframe.style.position='fixed';
+      iframe.style.left='-20000px';
+      iframe.style.top='0';
+      iframe.style.width=frameW+'px';
+      iframe.style.height=frameH+'px';
+      iframe.style.border='0';
+      iframe.style.opacity='0';
+      iframe.style.pointerEvents='none';
+      document.body.appendChild(iframe);
+
+      var doc=iframe.contentWindow.document;
+      doc.open();
+      doc.write(html);
+      doc.close();
+
+      var makePdf=function(){
+        var done=function(){
+          setTimeout(function(){
+            try{
+              var target=selector?doc.querySelector(selector):doc.body;
+              if(!target) target=doc.body;
+
+              window.html2canvas(target,{
+                scale:2,
+                useCORS:true,
+                allowTaint:true,
+                backgroundColor:'#ffffff',
+                windowWidth:frameW,
+                windowHeight:frameH,
+                scrollX:0,
+                scrollY:0
+              }).then(function(canvas){
+                var jspdfObj=window.jspdf||{};
+                var jsPDF=jspdfObj.jsPDF;
+                var pdf=new jsPDF({orientation:isLand?'landscape':'portrait',unit:'mm',format:'a4',compress:true});
+                var pageW=isLand?297:210;
+                var pageH=isLand?210:297;
+                var img=canvas.toDataURL('image/jpeg',0.98);
+                pdf.addImage(img,'JPEG',0,0,pageW,pageH,undefined,'FAST');
+                pdf.save(fileName);
+                if(iframe&&iframe.parentNode) iframe.parentNode.removeChild(iframe);
+                resolve();
+              }).catch(function(err){
+                if(iframe&&iframe.parentNode) iframe.parentNode.removeChild(iframe);
+                reject(err);
+              });
+            }catch(e){
+              if(iframe&&iframe.parentNode) iframe.parentNode.removeChild(iframe);
+              reject(e);
+            }
+          },500);
+        };
+
+        if(doc.fonts&&doc.fonts.ready){
+          doc.fonts.ready.then(done).catch(done);
+        }else{
+          done();
+        }
+      };
+
+      if(doc.readyState==='complete'){
+        makePdf();
+      }else{
+        iframe.onload=makePdf;
+      }
+    });
+  }).catch(function(err){
+    alert('حدث خطأ أثناء إنشاء ملف PDF. جرّب مرة أخرى.');
+    console.error(err);
+  });
+}
 // ── PRINT RESULT ──
 function printResult(){
   if(!currentStudent) return;
@@ -960,9 +1033,10 @@ function printResult(){
     +'<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">'
     +'<style>'
     +'*{box-sizing:border-box;margin:0;padding:0}'
-    +'html,body{font-family:Tajawal,sans-serif;direction:rtl;background:#fff}'
-    +'@page{size:A4 portrait;margin:8mm}'
-    +'body{padding:0;margin:0}'
+    +'html,body{font-family:Tajawal,sans-serif;direction:rtl;background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}'
+    +'@page{size:A4 portrait;margin:0}'
+    +'body{padding:0;margin:0;width:210mm;min-height:297mm}'
+    +'.result-page{width:210mm;min-height:297mm;padding:8mm;background:#fff}'
     +'.bar{height:5px;background:linear-gradient(90deg,#8c3318,#b94a28,#d4923a);margin-bottom:10px}'
     +'.top{text-align:center;margin-bottom:10px}'
     +'.doc-icon{font-size:1.5rem;color:#b94a28;margin-bottom:4px}'
@@ -983,7 +1057,7 @@ function printResult(){
     +'.sl{border-top:1px solid #c8a888;padding-top:4px;font-size:.7rem;color:#7a5a48;font-weight:700;margin-top:36px}'
     +'.dt{text-align:center;font-size:.68rem;color:#b08878;margin-top:8px}'
     +'.bb{height:3px;background:linear-gradient(90deg,#8c3318,#b94a28,#d4923a);margin-top:10px}'
-    +'</style></head><body>'
+    +'</style></head><body><div class="result-page">'
     +'<div class="bar"></div>'
     +'<div class="top">'
     +'<div class="doc-icon"><i class="fa-solid fa-file-lines"></i></div>'
@@ -1017,9 +1091,9 @@ function printResult(){
     +'</div>'
     +'<div class="dt">تاريخ الإصدار: '+today+'</div>'
     +'<div class="bb"></div>'
-    +'</body></html>';
+    +'</div></body></html>';
 
-  printHTMLDocument(html,'نتيجة الطالب');
+  downloadHTMLAsPDF(html,'نتيجة الطالب.pdf','portrait','.result-page');
 }
 
 // ── PRINT CERTIFICATE ──
@@ -1046,16 +1120,16 @@ function printCertificate(){
     honorText = 'تقديرًا لتفوقه الدراسي الملحوظ وتحقيقه مستوى متميزًا من الأداء.';
   }
 
-  var html='<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8">'
+  var html='<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=1123, initial-scale=1.0">'
     +'<title>شهادة الطالب</title>'
     +'<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">'
     +'<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">'
     +'<style>'
     +'*{box-sizing:border-box;margin:0;padding:0}'
-    +'html,body{width:100%;height:100%;font-family:Tajawal,sans-serif;direction:rtl;background:#f6f1ea;color:#3b1a0e}'
-    +'@page{size:A4 landscape;margin:0}'
-    +'body{margin:0;padding:0}'
-    +'.sheet{width:297mm;height:210mm;padding:9mm;background:linear-gradient(135deg,#f5ede3 0%,#fffaf4 45%,#f2e2cf 100%)}'
+    +'html,body{width:297mm;height:210mm;font-family:Tajawal,sans-serif;direction:rtl;background:#f6f1ea;color:#3b1a0e;overflow:hidden;-webkit-print-color-adjust:exact;print-color-adjust:exact}'
+    +'@page{size:297mm 210mm;margin:0}'
+    +'body{margin:0;padding:0;min-width:297mm;min-height:210mm}'
+    +'.sheet{width:297mm;height:210mm;min-width:297mm;min-height:210mm;padding:9mm;background:linear-gradient(135deg,#f5ede3 0%,#fffaf4 45%,#f2e2cf 100%)}'
     +'.cert{position:relative;width:100%;height:100%;overflow:hidden;border:4px solid #b94a28;background:linear-gradient(180deg,#fffdfa 0%,#fff8ef 100%);box-shadow:inset 0 0 0 2px rgba(185,74,40,.18), inset 0 0 0 10px rgba(212,98,58,.08)}'
     +'.cert:before{content:"";position:absolute;inset:12px;border:1.5px solid rgba(185,74,40,.35);pointer-events:none}'
     +'.cert:after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 50%, rgba(212,98,58,.08), transparent 35%), radial-gradient(circle at 12% 20%, rgba(228,190,140,.14), transparent 20%), radial-gradient(circle at 88% 82%, rgba(228,190,140,.12), transparent 20%);pointer-events:none}'
@@ -1065,7 +1139,7 @@ function printCertificate(){
     +'.corner.bl{bottom:14px;right:14px;border-bottom:3px solid;border-right:3px solid;border-radius:0 0 14px 0}'
     +'.corner.br{bottom:14px;left:14px;border-bottom:3px solid;border-left:3px solid;border-radius:0 0 0 14px}'
     +'.wrap{position:relative;z-index:3;height:100%;padding:14mm 16mm 10mm;display:flex;flex-direction:column;justify-content:space-between;text-align:center}'
-    +'.header{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}'
+    +'.header{display:flex;align-items:flex-start;justify-content:center;gap:14px}'
     +'.seal,.award{width:102px;display:flex;justify-content:center}'
     +'.seal-badge,.award-badge{width:86px;height:86px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#fef6e8 0%,#f0d9ad 55%,#d6a14f 100%);border:3px solid #b7771d;box-shadow:0 4px 14px rgba(122,62,42,.18), inset 0 0 0 4px rgba(255,255,255,.45);display:flex;align-items:center;justify-content:center;color:#8c3318;font-size:34px;font-weight:900}'
     +'.seal-badge i,.award-badge i{font-size:36px}'
@@ -1103,7 +1177,6 @@ function printCertificate(){
     +'<div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>'
     +'<div class="wrap">'
     +'<div class="header">'
-    +'<div class="award"><div class="award-badge"><i class="fa-solid fa-award"></i></div></div>'
     +'<div class="title-zone">'
     +'<div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>'
     +'<div class="school">الفاروق الثانوية بنين</div>'
@@ -1111,7 +1184,6 @@ function printCertificate(){
     +'<div class="sub-title">Certificate of Excellence &amp; Appreciation</div>'
     +'<div class="title-line"></div>'
     +'</div>'
-    +'<div class="seal"><div class="seal-badge"><i class="fa-solid fa-medal"></i></div></div>'
     +'</div>'
     +'<div class="body-copy">'
     +'<div class="lead">تُمنح هذه الشهادة إلى الطالب</div>'
@@ -1135,7 +1207,7 @@ function printCertificate(){
     +'</div>'
     +'</div></div></div></body></html>';
 
-  printHTMLDocument(html,'شهادة الطالب');
+  downloadHTMLAsPDF(html,'شهادة الطالب.pdf','landscape','.sheet');
 }
 </script>
 </body>
