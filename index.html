@@ -1,860 +1,1238 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>الاستعلام عن نتائج الصفين الأول والثاني الثانوي</title>
+  <meta name="theme-color" content="#0f2f57" />
+  <title>بوابة الاستعلام عن نتائج الصفين الأول والثاني الثانوي</title>
 
-  <!-- Tajawal Font -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet" />
-
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-
-  <!-- SheetJS: لقراءة ملفات Excel مباشرة من نفس فولدر الموقع -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PKPKZ5QiAj6Ta8PUb4LZKxnBTFLN7C6R0XkACt+N5QZ0WQGZ0Xf+2Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
   <style>
     :root {
-      --primary: #155e75;
-      --primary-2: #0f766e;
-      --accent: #f59e0b;
-      --bg: #f3f7fb;
-      --card: rgba(255, 255, 255, 0.92);
-      --text: #0f172a;
-      --muted: #64748b;
-      --border: #e2e8f0;
-      --danger: #dc2626;
-      --success: #16a34a;
-      --shadow: 0 24px 70px rgba(15, 23, 42, 0.12);
-      --radius: 26px;
+      --primary: #0f2f57;
+      --primary-2: #154876;
+      --primary-3: #0b2442;
+      --gold: #c69a45;
+      --green: #16815f;
+      --red: #b42318;
+      --bg: #f3f6fb;
+      --card: #ffffff;
+      --text: #152238;
+      --muted: #6b7280;
+      --line: #dce3ee;
+      --shadow: 0 20px 55px rgba(15, 47, 87, 0.12);
+      --radius: 24px;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
 
     body {
-      min-height: 100vh;
+      margin: 0;
       font-family: "Tajawal", Arial, sans-serif;
       background:
-        radial-gradient(circle at top right, rgba(21, 94, 117, 0.22), transparent 35%),
-        radial-gradient(circle at bottom left, rgba(245, 158, 11, 0.18), transparent 30%),
-        linear-gradient(135deg, #eef7fb 0%, #f8fafc 48%, #eef2ff 100%);
+        radial-gradient(circle at top right, rgba(198, 154, 69, 0.16), transparent 34rem),
+        linear-gradient(180deg, #edf2f9 0%, var(--bg) 42%, #ffffff 100%);
       color: var(--text);
-      overflow-x: hidden;
+      min-height: 100vh;
     }
 
-    .page {
+    a { color: inherit; text-decoration: none; }
+
+    .site-shell {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .top-ribbon {
+      background: var(--primary-3);
+      color: #ffffff;
+      border-bottom: 3px solid var(--gold);
+    }
+
+    .container {
       width: min(1180px, calc(100% - 32px));
-      margin: 0 auto;
-      padding: 28px 0 42px;
+      margin-inline: auto;
     }
 
-    .topbar {
+    .ribbon-inner {
+      min-height: 44px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 18px;
-      margin-bottom: 26px;
+      gap: 16px;
+      font-size: 14px;
+      color: rgba(255,255,255,0.88);
+    }
+
+    .ribbon-inner .ribbon-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+
+    .hero {
+      padding: 36px 0 26px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(135deg, rgba(15,47,87,0.95), rgba(21,72,118,0.92)),
+        repeating-linear-gradient(45deg, transparent 0 16px, rgba(255,255,255,0.035) 16px 17px);
+      border-bottom-left-radius: 48px;
+      border-bottom-right-radius: 48px;
+      z-index: -2;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      left: -120px;
+      top: 12px;
+      width: 360px;
+      height: 360px;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 50%;
+      z-index: -1;
+    }
+
+    .brand-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      color: #fff;
     }
 
     .brand {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 18px;
     }
 
-    .brand-icon {
-      width: 56px;
-      height: 56px;
-      border-radius: 18px;
+    .brand-mark {
+      width: 78px;
+      height: 78px;
+      border-radius: 22px;
+      background: linear-gradient(145deg, #ffffff, #eaf0f7);
+      color: var(--primary);
       display: grid;
       place-items: center;
-      color: #fff;
-      font-size: 25px;
-      background: linear-gradient(135deg, var(--primary), var(--primary-2));
-      box-shadow: 0 16px 35px rgba(15, 118, 110, 0.28);
+      box-shadow: 0 14px 35px rgba(0,0,0,0.18);
+      border: 3px solid rgba(198,154,69,0.55);
+      flex: 0 0 auto;
     }
 
-    .brand h1 {
-      font-size: clamp(20px, 3vw, 32px);
-      font-weight: 900;
+    .brand-mark i { font-size: 34px; }
+
+    .brand-text .eyebrow {
+      margin: 0 0 6px;
+      color: rgba(255,255,255,0.82);
+      font-weight: 700;
+      letter-spacing: 0.2px;
+    }
+
+    .brand-text h1 {
+      margin: 0;
+      font-size: clamp(25px, 4vw, 43px);
       line-height: 1.25;
+      font-weight: 900;
     }
 
-    .brand p {
-      margin-top: 3px;
-      color: var(--muted);
+    .brand-text .sub-title {
+      margin: 8px 0 0;
+      color: rgba(255,255,255,0.86);
+      font-size: 17px;
       font-weight: 500;
     }
 
     .status-pill {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 11px 16px;
+      gap: 10px;
+      padding: 12px 16px;
       border-radius: 999px;
-      border: 1px solid rgba(15, 118, 110, 0.2);
-      background: rgba(255, 255, 255, 0.72);
-      color: var(--primary);
-      font-weight: 800;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.20);
+      color: #fff;
+      font-weight: 700;
+      backdrop-filter: blur(8px);
       white-space: nowrap;
     }
 
-    .hero {
+    .status-dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: #fbbf24;
+      box-shadow: 0 0 0 6px rgba(251,191,36,0.16);
+    }
+
+    .status-dot.ready {
+      background: #22c55e;
+      box-shadow: 0 0 0 6px rgba(34,197,94,0.16);
+    }
+
+    main {
+      flex: 1;
+      padding: 0 0 38px;
+    }
+
+    .search-panel {
+      margin-top: -20px;
       position: relative;
-      border-radius: 34px;
-      background:
-        linear-gradient(135deg, rgba(15, 94, 117, 0.96), rgba(15, 118, 110, 0.92)),
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320' viewBox='0 0 320 320'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='.14' stroke-width='2'%3E%3Cpath d='M0 80h320M0 160h320M0 240h320M80 0v320M160 0v320M240 0v320'/%3E%3C/g%3E%3C/svg%3E");
-      color: #fff;
-      padding: clamp(26px, 5vw, 52px);
+      z-index: 2;
+    }
+
+    .panel-card {
+      background: var(--card);
+      border-radius: var(--radius);
       box-shadow: var(--shadow);
+      border: 1px solid rgba(220,227,238,0.94);
       overflow: hidden;
     }
 
-    .hero::after {
-      content: "";
-      position: absolute;
-      width: 270px;
-      height: 270px;
-      left: -70px;
-      top: -80px;
-      border-radius: 50%;
-      background: rgba(245, 158, 11, 0.25);
-      filter: blur(1px);
-    }
-
-    .hero-content {
-      position: relative;
-      z-index: 1;
-      display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
-      gap: 30px;
-      align-items: center;
-    }
-
-    .hero h2 {
-      font-size: clamp(28px, 5vw, 52px);
-      font-weight: 900;
-      line-height: 1.15;
-      margin-bottom: 14px;
-    }
-
-    .hero p {
-      color: rgba(255, 255, 255, 0.88);
-      font-size: 18px;
-      line-height: 1.9;
-      max-width: 690px;
-    }
-
-    .hero-stats {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
-    }
-
-    .stat-box {
-      border: 1px solid rgba(255, 255, 255, 0.22);
-      background: rgba(255, 255, 255, 0.12);
-      backdrop-filter: blur(10px);
-      border-radius: 22px;
-      padding: 18px;
-    }
-
-    .stat-box i {
-      font-size: 24px;
-      color: #fde68a;
-      margin-bottom: 12px;
-    }
-
-    .stat-box strong {
-      display: block;
-      font-size: 25px;
-      font-weight: 900;
-    }
-
-    .stat-box span {
-      color: rgba(255, 255, 255, 0.82);
-      font-weight: 500;
-    }
-
-    .search-card {
-      margin-top: -38px;
-      position: relative;
-      z-index: 5;
-      border-radius: var(--radius);
-      background: var(--card);
-      backdrop-filter: blur(18px);
-      border: 1px solid rgba(255, 255, 255, 0.7);
-      box-shadow: var(--shadow);
-      padding: clamp(18px, 4vw, 30px);
-    }
-
-    .search-title {
+    .panel-head {
+      padding: 26px 30px;
+      border-bottom: 1px solid var(--line);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 14px;
-      margin-bottom: 20px;
+      gap: 16px;
+      background:
+        linear-gradient(90deg, rgba(15,47,87,0.06), rgba(198,154,69,0.06)),
+        #fff;
     }
 
-    .search-title h3 {
+    .panel-title {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .panel-title-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      color: var(--primary);
+      background: rgba(15,47,87,0.09);
+      font-size: 20px;
+    }
+
+    .panel-title h2 {
+      margin: 0;
       font-size: 24px;
       font-weight: 900;
-      color: var(--primary);
+      color: var(--primary-3);
     }
 
-    .search-title p {
+    .panel-title p {
+      margin: 4px 0 0;
       color: var(--muted);
-      font-weight: 600;
-      margin-top: 4px;
+      font-weight: 500;
     }
 
-    .loader-note {
+    .service-badge {
+      border: 1px solid rgba(22,129,95,0.18);
+      color: var(--green);
+      background: rgba(22,129,95,0.08);
+      padding: 10px 14px;
+      border-radius: 14px;
+      font-weight: 800;
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      color: var(--muted);
-      font-weight: 700;
-      font-size: 14px;
+      white-space: nowrap;
     }
 
-    .spin {
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+    .panel-body {
+      padding: 30px;
     }
 
     .form-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr auto;
-      gap: 14px;
+      grid-template-columns: minmax(230px, 0.9fr) minmax(280px, 1.35fr) auto;
+      gap: 16px;
       align-items: end;
     }
 
     .field label {
       display: block;
-      margin-bottom: 8px;
-      color: #334155;
+      margin-bottom: 9px;
+      font-size: 15px;
+      color: var(--primary-3);
       font-weight: 800;
     }
 
-    .input-wrap {
+    .input-wrap, .select-wrap {
       position: relative;
     }
 
-    .input-wrap i {
+    .input-wrap i, .select-wrap i {
       position: absolute;
       top: 50%;
-      right: 16px;
       transform: translateY(-50%);
+      right: 18px;
       color: var(--primary-2);
-      font-size: 17px;
+      opacity: 0.8;
+      pointer-events: none;
     }
 
-    input, select {
-      width: 100%;
-      min-height: 56px;
-      border: 1px solid var(--border);
-      outline: none;
-      border-radius: 18px;
-      background: #fff;
-      padding: 0 48px 0 16px;
+    input, select, button {
       font-family: inherit;
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--text);
-      transition: 0.2s ease;
     }
 
-    select {
+    .control {
+      width: 100%;
+      height: 56px;
+      border: 1px solid #ccd6e6;
+      border-radius: 16px;
+      outline: none;
+      background: #fff;
+      color: var(--text);
+      font-size: 16px;
+      font-weight: 600;
+      padding: 0 50px 0 18px;
+      transition: border 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    select.control {
       appearance: none;
       cursor: pointer;
+      padding-left: 45px;
     }
 
-    input:focus, select:focus {
+    .select-arrow {
+      position: absolute;
+      left: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      pointer-events: none;
+    }
+
+    .control:focus {
       border-color: var(--primary-2);
-      box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.12);
+      box-shadow: 0 0 0 4px rgba(21,72,118,0.12);
+      background: #fbfdff;
     }
 
-    .btn {
-      min-height: 56px;
-      border: none;
-      border-radius: 18px;
-      padding: 0 28px;
-      cursor: pointer;
-      font-family: inherit;
-      font-size: 16px;
-      font-weight: 900;
+    .submit-btn {
+      height: 56px;
+      min-width: 174px;
+      border: 0;
+      border-radius: 16px;
       color: #fff;
       background: linear-gradient(135deg, var(--primary), var(--primary-2));
-      box-shadow: 0 16px 30px rgba(15, 118, 110, 0.22);
+      box-shadow: 0 12px 24px rgba(15,47,87,0.20);
+      font-size: 17px;
+      font-weight: 900;
+      cursor: pointer;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 10px;
-      transition: transform 0.18s ease, box-shadow 0.18s ease;
-      white-space: nowrap;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
     }
 
-    .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 20px 38px rgba(15, 118, 110, 0.30);
-    }
+    .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 16px 30px rgba(15,47,87,0.26); }
+    .submit-btn:disabled { opacity: 0.62; cursor: not-allowed; transform: none; }
 
-    .btn:disabled {
-      opacity: 0.65;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    .hint {
-      margin-top: 14px;
-      color: var(--muted);
-      font-weight: 600;
-      line-height: 1.7;
+    .quick-actions {
+      margin-top: 18px;
       display: flex;
-      align-items: flex-start;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .quick-chip {
+      border: 1px solid var(--line);
+      background: #f8fafc;
+      color: var(--primary-3);
+      padding: 9px 13px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
       gap: 8px;
     }
 
-    .hint i {
-      color: var(--accent);
-      margin-top: 3px;
-    }
-
-    .alert {
-      margin-top: 18px;
-      padding: 15px 18px;
+    .message {
+      margin-top: 20px;
       border-radius: 18px;
-      font-weight: 800;
+      padding: 16px 18px;
       display: none;
-      line-height: 1.8;
+      align-items: flex-start;
+      gap: 12px;
+      font-weight: 700;
+      line-height: 1.7;
     }
 
-    .alert.show { display: block; }
-    .alert.error { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
-    .alert.success { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
-    .alert.info { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
+    .message.show { display: flex; }
+    .message.info { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+    .message.error { background: #fff1f2; color: #b42318; border: 1px solid #fecdd3; }
+    .message.warning { background: #fffbeb; color: #92400e; border: 1px solid #fde68a; }
+    .message.success { background: #ecfdf5; color: #047857; border: 1px solid #bbf7d0; }
 
-    .results {
-      margin-top: 24px;
-      display: grid;
-      gap: 18px;
+    .results-section {
+      margin-top: 28px;
+      display: none;
     }
 
-    .student-card {
-      border-radius: var(--radius);
+    .results-section.show { display: block; }
+
+    .result-card {
       background: #fff;
-      border: 1px solid var(--border);
-      box-shadow: 0 14px 45px rgba(15, 23, 42, 0.08);
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
       overflow: hidden;
     }
 
-    .student-head {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 16px;
-      padding: 22px;
-      background: linear-gradient(135deg, #f8fafc, #ecfeff);
-      border-bottom: 1px solid var(--border);
+    .result-top {
+      background:
+        linear-gradient(135deg, rgba(15,47,87,0.98), rgba(21,72,118,0.94)),
+        repeating-linear-gradient(45deg, rgba(255,255,255,0.03) 0 12px, transparent 12px 24px);
+      color: #fff;
+      padding: 26px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 20px;
+      border-bottom: 4px solid var(--gold);
     }
 
-    .student-name {
-      font-size: 24px;
-      color: var(--primary);
+    .student-block h3 {
+      margin: 0 0 9px;
+      font-size: clamp(23px, 4vw, 34px);
       font-weight: 900;
-      margin-bottom: 7px;
+      line-height: 1.3;
     }
 
-    .meta {
+    .student-meta {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
-      color: var(--muted);
+      color: rgba(255,255,255,0.88);
       font-weight: 700;
     }
 
-    .meta span {
+    .student-meta span {
       display: inline-flex;
       align-items: center;
       gap: 7px;
-      background: #fff;
-      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.10);
+      border: 1px solid rgba(255,255,255,0.16);
+      padding: 9px 12px;
       border-radius: 999px;
-      padding: 8px 12px;
     }
 
-    .badge {
-      align-self: start;
-      border-radius: 999px;
-      padding: 10px 16px;
-      font-weight: 900;
+    .status-large {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
+      justify-content: center;
+      gap: 10px;
+      padding: 13px 18px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.18);
+      font-size: 18px;
+      font-weight: 900;
       white-space: nowrap;
     }
 
-    .badge.pass { background: #dcfce7; color: #166534; }
-    .badge.fail { background: #fee2e2; color: #991b1b; }
+    .status-large.pass { color: #dcfce7; }
+    .status-large.fail { color: #fee2e2; }
 
     .summary-grid {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 12px;
-      padding: 18px 22px 6px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      padding: 24px 30px 0;
     }
 
-    .summary-item {
-      border-radius: 18px;
-      background: #f8fafc;
-      border: 1px solid var(--border);
-      padding: 16px;
+    .summary-card {
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 18px;
+      background: linear-gradient(180deg, #fff, #f9fbfe);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-height: 96px;
     }
 
-    .summary-item span {
-      color: var(--muted);
-      font-weight: 700;
+    .summary-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      color: var(--primary);
+      background: rgba(15,47,87,0.09);
+      flex: 0 0 auto;
+      font-size: 19px;
+    }
+
+    .summary-card small {
       display: block;
-      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 4px;
     }
 
-    .summary-item strong {
-      color: var(--text);
-      font-size: 22px;
+    .summary-card strong {
+      display: block;
+      color: var(--primary-3);
+      font-size: 25px;
       font-weight: 900;
+      line-height: 1.2;
     }
 
-    .marks-wrap {
-      padding: 18px 22px 22px;
+    .table-wrap {
+      padding: 24px 30px 30px;
       overflow-x: auto;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 760px;
-      overflow: hidden;
+      min-width: 720px;
+      border: 1px solid var(--line);
       border-radius: 18px;
-      border: 1px solid var(--border);
+      overflow: hidden;
     }
 
-    th, td {
-      padding: 13px 14px;
-      border-bottom: 1px solid var(--border);
-      text-align: center;
-      font-weight: 700;
-    }
-
-    th {
-      background: #0f766e;
-      color: #fff;
+    thead th {
+      background: #eef3f9;
+      color: var(--primary-3);
+      text-align: right;
+      padding: 16px 18px;
+      font-size: 15px;
       font-weight: 900;
-      position: sticky;
-      top: 0;
+      border-bottom: 1px solid var(--line);
     }
 
-    tr:nth-child(even) td { background: #f8fafc; }
-    tr:last-child td { border-bottom: 0; }
+    tbody td {
+      padding: 15px 18px;
+      border-bottom: 1px solid #edf1f6;
+      color: #27364f;
+      font-weight: 700;
+      vertical-align: middle;
+    }
 
-    .footer {
-      margin-top: 28px;
-      text-align: center;
+    tbody tr:nth-child(even) td { background: #fbfdff; }
+    tbody tr:last-child td { border-bottom: 0; }
+
+    .degree-value {
+      display: inline-flex;
+      min-width: 76px;
+      justify-content: center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #f1f5f9;
+      color: var(--primary-3);
+      font-weight: 900;
+    }
+
+    .notes-box {
+      margin: 0 30px 30px;
+      border: 1px solid #fde68a;
+      background: #fffbeb;
+      color: #78350f;
+      border-radius: 18px;
+      padding: 16px 18px;
+      font-weight: 700;
+      line-height: 1.8;
+      display: flex;
+      gap: 12px;
+    }
+
+    .action-row {
+      padding: 0 30px 30px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .secondary-btn {
+      min-height: 48px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--primary-3);
+      border-radius: 14px;
+      padding: 0 18px;
+      font-weight: 900;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .secondary-btn:hover { transform: translateY(-2px); border-color: var(--primary-2); }
+
+    .matches-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .match-card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      box-shadow: 0 12px 32px rgba(15,47,87,0.07);
+    }
+
+    .match-card h4 {
+      margin: 0 0 7px;
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--primary-3);
+    }
+
+    .match-card p {
+      margin: 0;
       color: var(--muted);
       font-weight: 700;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 14px;
     }
 
-    @media (max-width: 900px) {
-      .topbar, .hero-content, .search-title, .student-head {
-        grid-template-columns: 1fr;
-        flex-direction: column;
-        align-items: flex-start;
-      }
+    .tiny-btn {
+      border: 0;
+      border-radius: 13px;
+      padding: 11px 14px;
+      cursor: pointer;
+      color: #fff;
+      background: var(--primary);
+      font-weight: 900;
+      white-space: nowrap;
+    }
 
-      .hero-content { display: block; }
-      .hero-stats { margin-top: 24px; }
+    .footer {
+      margin-top: auto;
+      padding: 22px 0;
+      background: #0b2442;
+      color: rgba(255,255,255,0.80);
+      border-top: 3px solid var(--gold);
+    }
+
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .footer-inner span {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .loader {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 3px solid rgba(15,47,87,0.16);
+      border-top-color: var(--primary);
+      animation: spin 0.9s linear infinite;
+      display: inline-block;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 900px) {
+      .brand-row, .panel-head, .result-top, .footer-inner { flex-direction: column; align-items: flex-start; }
       .form-grid { grid-template-columns: 1fr; }
-      .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .btn { width: 100%; }
+      .submit-btn { width: 100%; }
+      .summary-grid { grid-template-columns: 1fr; }
+      .matches-grid { grid-template-columns: 1fr; }
+      .status-pill { white-space: normal; }
+      .ribbon-inner { flex-direction: column; align-items: flex-start; padding: 10px 0; }
     }
 
     @media (max-width: 560px) {
-      .page { width: min(100% - 20px, 1180px); padding-top: 16px; }
-      .hero { border-radius: 24px; }
-      .search-card { margin-top: -22px; }
-      .hero-stats, .summary-grid { grid-template-columns: 1fr; }
-      .brand-icon { width: 48px; height: 48px; }
-      .student-name { font-size: 20px; }
+      .container { width: min(100% - 22px, 1180px); }
+      .hero { padding-top: 24px; }
+      .brand { align-items: flex-start; }
+      .brand-mark { width: 62px; height: 62px; border-radius: 18px; }
+      .brand-mark i { font-size: 27px; }
+      .panel-head, .panel-body, .result-top, .summary-grid, .table-wrap, .action-row { padding-inline: 18px; }
+      .notes-box { margin-inline: 18px; }
+      .control, .submit-btn { height: 54px; }
+    }
+
+    @media print {
+      body { background: #fff; }
+      .top-ribbon, .hero, .search-panel, .footer, .action-row, .message { display: none !important; }
+      main { padding: 0; }
+      .results-section { display: block !important; margin: 0; }
+      .container { width: 100%; }
+      .result-card { box-shadow: none; border-radius: 0; border: 0; }
+      .result-top { border-radius: 0; }
+      table { min-width: 0; }
     }
   </style>
 </head>
 <body>
-  <main class="page">
-    <header class="topbar">
-      <div class="brand">
-        <div class="brand-icon"><i class="fa-solid fa-graduation-cap"></i></div>
-        <div>
-          <h1>بوابة نتائج الثانوية العامة</h1>
-          <p>الصف الأول والثاني الثانوي</p>
+  <div class="site-shell">
+    <header>
+      <div class="top-ribbon">
+        <div class="container ribbon-inner">
+          <div class="ribbon-item"><i class="fa-solid fa-shield-halved"></i> منظومة النتائج الإلكترونية</div>
+          <div class="ribbon-item"><i class="fa-solid fa-calendar-check"></i> خدمة الاستعلام عن الدرجات</div>
         </div>
       </div>
-      <div class="status-pill" id="loadStatus">
-        <i class="fa-solid fa-circle-notch spin"></i>
-        جاري تحميل ملفات النتائج...
-      </div>
+
+      <section class="hero">
+        <div class="container brand-row">
+          <div class="brand">
+            <div class="brand-mark" aria-hidden="true"><i class="fa-solid fa-building-columns"></i></div>
+            <div class="brand-text">
+              <p class="eyebrow">إدارة شؤون الطلاب</p>
+              <h1>بوابة نتائج الصفين الأول والثاني الثانوي</h1>
+              <p class="sub-title">استعلام فوري عن درجات الطالب برقم الجلوس أو الاسم</p>
+            </div>
+          </div>
+          <div class="status-pill" id="systemStatus">
+            <span class="status-dot" id="statusDot"></span>
+            <span id="statusText">جاري تجهيز الخدمة</span>
+          </div>
+        </div>
+      </section>
     </header>
 
-    <section class="hero">
-      <div class="hero-content">
-        <div>
-          <h2>اعرف نتيجتك بسهولة</h2>
-          <p>
-            ابحث عن نتيجة الطالب باستخدام رقم الجلوس أو الاسم. الصفحة تقرأ ملفات Excel الموجودة بجانب ملف الموقع مباشرة دون إدخال يدوي للدرجات.
-          </p>
-        </div>
-        <div class="hero-stats">
-          <div class="stat-box">
-            <i class="fa-solid fa-file-excel"></i>
-            <strong id="fileCount">2</strong>
-            <span>ملفات نتائج</span>
-          </div>
-          <div class="stat-box">
-            <i class="fa-solid fa-users"></i>
-            <strong id="studentCount">0</strong>
-            <span>طالب محمل</span>
-          </div>
-          <div class="stat-box">
-            <i class="fa-solid fa-magnifying-glass-chart"></i>
-            <strong>فوري</strong>
-            <span>بحث سريع</span>
-          </div>
-          <div class="stat-box">
-            <i class="fa-solid fa-shield-halved"></i>
-            <strong>محلي</strong>
-            <span>من نفس الفولدر</span>
-          </div>
-        </div>
-      </div>
-    </section>
+    <main>
+      <section class="search-panel">
+        <div class="container">
+          <div class="panel-card">
+            <div class="panel-head">
+              <div class="panel-title">
+                <div class="panel-title-icon"><i class="fa-solid fa-magnifying-glass-chart"></i></div>
+                <div>
+                  <h2>الاستعلام عن النتيجة</h2>
+                  <p>اختر الصف ثم أدخل رقم الجلوس أو اسم الطالب.</p>
+                </div>
+              </div>
+              <div class="service-badge"><i class="fa-solid fa-circle-check"></i> خدمة إلكترونية</div>
+            </div>
 
-    <section class="search-card">
-      <div class="search-title">
-        <div>
-          <h3><i class="fa-solid fa-magnifying-glass"></i> الاستعلام عن النتيجة</h3>
-          <p>اكتب رقم الجلوس كاملًا أو جزءًا من اسم الطالب.</p>
-        </div>
-        <div class="loader-note" id="loaderNote">
-          <i class="fa-solid fa-circle-notch spin"></i>
-          يتم تجهيز البيانات
-        </div>
-      </div>
+            <div class="panel-body">
+              <form id="searchForm" autocomplete="off">
+                <div class="form-grid">
+                  <div class="field">
+                    <label for="gradeSelect">الصف الدراسي</label>
+                    <div class="select-wrap">
+                      <i class="fa-solid fa-graduation-cap"></i>
+                      <select class="control" id="gradeSelect" required>
+                        <option value="first">الصف الأول الثانوي</option>
+                        <option value="second">الصف الثاني الثانوي</option>
+                      </select>
+                      <span class="select-arrow"><i class="fa-solid fa-chevron-down"></i></span>
+                    </div>
+                  </div>
 
-      <form class="form-grid" id="searchForm">
-        <div class="field">
-          <label for="gradeSelect">اختر الصف</label>
-          <div class="input-wrap">
-            <i class="fa-solid fa-layer-group"></i>
-            <select id="gradeSelect">
-              <option value="all">كل الصفوف</option>
-              <option value="first">الأول الثانوي</option>
-              <option value="second">الثاني الثانوي</option>
-            </select>
-          </div>
-        </div>
+                  <div class="field">
+                    <label for="searchInput">رقم الجلوس أو اسم الطالب</label>
+                    <div class="input-wrap">
+                      <i class="fa-regular fa-id-card"></i>
+                      <input class="control" id="searchInput" type="text" placeholder="اكتب رقم الجلوس أو الاسم" required />
+                    </div>
+                  </div>
 
-        <div class="field">
-          <label for="queryInput">رقم الجلوس أو الاسم</label>
-          <div class="input-wrap">
-            <i class="fa-solid fa-id-card"></i>
-            <input id="queryInput" type="text" placeholder="مثال: 90 أو هاجر إبراهيم" autocomplete="off" />
-          </div>
-        </div>
+                  <button class="submit-btn" id="searchBtn" type="submit">
+                    <i class="fa-solid fa-search"></i>
+                    عرض النتيجة
+                  </button>
+                </div>
+              </form>
 
-        <button class="btn" id="searchBtn" type="submit" disabled>
-          <i class="fa-solid fa-search"></i>
-          بحث الآن
-        </button>
-      </form>
+              <div class="quick-actions" aria-label="معلومات الخدمة">
+                <span class="quick-chip"><i class="fa-solid fa-user-check"></i> البحث بالاسم</span>
+                <span class="quick-chip"><i class="fa-solid fa-hashtag"></i> البحث برقم الجلوس</span>
+                <span class="quick-chip"><i class="fa-solid fa-file-shield"></i> نتيجة تفصيلية</span>
+              </div>
 
-      <div class="hint">
-        <i class="fa-solid fa-circle-info"></i>
-        <span>
-          يجب أن يكون ملف <b>index.html</b> في نفس الفولدر مع <b>1sanawe.xlsx</b> و <b>2sanawe.xlsx</b>. لا تستخدم علامة / قبل اسم الملف؛ المسار الصحيح هنا هو <b>./1sanawe.xlsx</b> و <b>./2sanawe.xlsx</b>.
-        </span>
-      </div>
-
-      <div class="alert info" id="messageBox"></div>
-      <div class="results" id="results"></div>
-    </section>
-
-    <p class="footer">تم تصميم الصفحة لقراءة ملفات Excel محليًا من نفس مجلد الموقع.</p>
-  </main>
-
-  <script>
-    // =====================================================
-    // المسارات الصحيحة: الملفات بجانب index.html في نفس الفولدر
-    // لا تكتب /1sanawe.xlsx لأنها تعني جذر السيرفر، وليس نفس الفولدر دائمًا.
-    // =====================================================
-    const EXCEL_FILES = [
-      { key: "first",  label: "الأول الثانوي",  path: "./1sanawe.xlsx" },
-      { key: "second", label: "الثاني الثانوي", path: "./2sanawe.xlsx" }
-    ];
-
-    let allStudents = [];
-    let loaded = false;
-
-    const searchForm = document.getElementById("searchForm");
-    const gradeSelect = document.getElementById("gradeSelect");
-    const queryInput = document.getElementById("queryInput");
-    const searchBtn = document.getElementById("searchBtn");
-    const results = document.getElementById("results");
-    const messageBox = document.getElementById("messageBox");
-    const loadStatus = document.getElementById("loadStatus");
-    const loaderNote = document.getElementById("loaderNote");
-    const studentCount = document.getElementById("studentCount");
-
-    function normalizeArabic(value) {
-      return String(value ?? "")
-        .trim()
-        .replace(/[أإآ]/g, "ا")
-        .replace(/ى/g, "ي")
-        .replace(/ة/g, "ه")
-        .replace(/[\u064B-\u065F\u0670]/g, "")
-        .replace(/\s+/g, " ")
-        .toLowerCase();
-    }
-
-    function toDisplay(value) {
-      if (value === null || value === undefined || value === "") return "-";
-      if (typeof value === "number") {
-        if (value > 0 && value <= 1) return `${(value * 100).toFixed(2)}%`;
-        return Number.isInteger(value) ? String(value) : value.toFixed(2);
-      }
-      return String(value);
-    }
-
-    function getField(row, names) {
-      const keys = Object.keys(row);
-      const normalizedNames = names.map(normalizeArabic);
-      for (const key of keys) {
-        const nk = normalizeArabic(key);
-        if (normalizedNames.includes(nk)) return row[key];
-      }
-      for (const key of keys) {
-        const nk = normalizeArabic(key);
-        if (normalizedNames.some(name => nk.includes(name))) return row[key];
-      }
-      return "";
-    }
-
-    async function loadExcelFile(fileInfo) {
-      const response = await fetch(fileInfo.path, { cache: "no-store" });
-      if (!response.ok) {
-        throw new Error(`لم يتم العثور على الملف: ${fileInfo.path}`);
-      }
-
-      const buffer = await response.arrayBuffer();
-      const workbook = XLSX.read(buffer, { type: "array" });
-
-      const sheetName = workbook.SheetNames.includes("درجات الطلاب")
-        ? "درجات الطلاب"
-        : workbook.SheetNames[0];
-
-      const sheet = workbook.Sheets[sheetName];
-      const rows = XLSX.utils.sheet_to_json(sheet, { defval: "" });
-
-      return rows
-        .filter(row => Object.values(row).some(value => String(value).trim() !== ""))
-        .map(row => ({
-          ...row,
-          __gradeKey: fileInfo.key,
-          __gradeLabel: fileInfo.label,
-          __seat: String(getField(row, ["رقم الجلوس", "جلوس", "رقم"])).trim(),
-          __name: String(getField(row, ["اسم الطالب", "الاسم", "اسم"])).trim()
-        }));
-    }
-
-    async function loadAllFiles() {
-      try {
-        if (typeof XLSX === "undefined") {
-          throw new Error("مكتبة قراءة Excel لم يتم تحميلها. تأكد من اتصال الإنترنت لأن الصفحة تستخدم SheetJS من CDN.");
-        }
-
-        const groups = await Promise.all(EXCEL_FILES.map(loadExcelFile));
-        allStudents = groups.flat();
-        loaded = true;
-
-        studentCount.textContent = allStudents.length.toLocaleString("ar-EG");
-        searchBtn.disabled = false;
-        loadStatus.innerHTML = `<i class="fa-solid fa-check-circle"></i> تم تحميل النتائج`;
-        loaderNote.innerHTML = `<i class="fa-solid fa-check-circle"></i> جاهز للبحث`;
-        showMessage(`تم تحميل ${allStudents.length.toLocaleString("ar-EG")} طالب بنجاح.`, "success");
-      } catch (error) {
-        loaded = false;
-        searchBtn.disabled = true;
-        loadStatus.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> فشل تحميل الملفات`;
-        loaderNote.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> تحقق من المسار`;
-        showMessage(
-          `تعذر استدعاء ملفات Excel تلقائيًا. تأكد أن index.html و 1sanawe.xlsx و 2sanawe.xlsx داخل نفس الفولدر، وافتح الموقع عبر Live Server أو python -m http.server وليس بالضغط المزدوج على الملف. تفاصيل الخطأ: ${error.message}`,
-          "error"
-        );
-      }
-    }
-
-    function showMessage(text, type = "info") {
-      messageBox.className = `alert show ${type}`;
-      messageBox.innerHTML = text;
-    }
-
-    function clearMessage() {
-      messageBox.className = "alert info";
-      messageBox.innerHTML = "";
-    }
-
-    function searchStudents(query, gradeKey) {
-      const q = normalizeArabic(query);
-      const raw = String(query).trim();
-      const isNumberQuery = /^\d+$/.test(raw);
-
-      return allStudents.filter(student => {
-        const gradeMatch = gradeKey === "all" || student.__gradeKey === gradeKey;
-        if (!gradeMatch) return false;
-
-        const seat = String(student.__seat || "").trim();
-        const name = normalizeArabic(student.__name || "");
-
-        if (isNumberQuery) return seat === raw;
-        return name.includes(q) || seat === raw;
-      });
-    }
-
-    function getSummary(student) {
-      return {
-        seat: student.__seat || getField(student, ["رقم الجلوس"]),
-        name: student.__name || getField(student, ["اسم الطالب"]),
-        total: getField(student, ["المجموع"]),
-        percent: getField(student, ["النسبة"]),
-        grade: getField(student, ["التقدير"]),
-        status: getField(student, ["الحالة"]),
-        className: getField(student, ["الصف", "الشعبة"])
-      };
-    }
-
-    function isMainColumn(header) {
-      const h = normalizeArabic(header);
-      return [
-        "رقم الجلوس", "اسم الطالب", "الاسم", "الصف", "الشعبه", "المجموع", "النسبه", "التقدير", "الحاله", "ملاحظات"
-      ].some(item => h.includes(item));
-    }
-
-    function renderStudentCard(student) {
-      const summary = getSummary(student);
-      const statusText = String(summary.status || "");
-      const pass = !normalizeArabic(statusText).includes("راسب");
-
-      const subjectEntries = Object.entries(student).filter(([key, value]) => {
-        if (key.startsWith("__")) return false;
-        if (String(key).startsWith("__EMPTY")) return false;
-        if (value === "" || value === null || value === undefined) return false;
-        return !isMainColumn(key);
-      });
-
-      const tableRows = subjectEntries.map(([key, value]) => `
-        <tr>
-          <td>${key}</td>
-          <td>${toDisplay(value)}</td>
-        </tr>
-      `).join("");
-
-      return `
-        <article class="student-card">
-          <div class="student-head">
-            <div>
-              <h3 class="student-name">${summary.name || "اسم غير متاح"}</h3>
-              <div class="meta">
-                <span><i class="fa-solid fa-id-card"></i> رقم الجلوس: ${toDisplay(summary.seat)}</span>
-                <span><i class="fa-solid fa-school"></i> ${student.__gradeLabel}</span>
-                ${summary.className ? `<span><i class="fa-solid fa-layer-group"></i> ${toDisplay(summary.className)}</span>` : ""}
+              <div class="message info show" id="messageBox">
+                <i class="fa-solid fa-circle-info"></i>
+                <span>جاري تحميل بيانات النتائج...</span>
               </div>
             </div>
-            <div class="badge ${pass ? "pass" : "fail"}">
-              <i class="fa-solid ${pass ? "fa-circle-check" : "fa-circle-xmark"}"></i>
-              ${toDisplay(summary.status)}
+          </div>
+        </div>
+      </section>
+
+      <section class="results-section" id="resultsSection">
+        <div class="container" id="resultsContainer"></div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="container footer-inner">
+        <span><i class="fa-solid fa-lock"></i> بوابة نتائج المرحلة الثانوية</span>
+        <span><i class="fa-regular fa-copyright"></i> جميع الحقوق محفوظة</span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    const DATABASE_FILES = {
+      first: {
+        title: "الصف الأول الثانوي",
+        file: "1sanawe.xlsx"
+      },
+      second: {
+        title: "الصف الثاني الثانوي",
+        file: "2sanawe.xlsx"
+      }
+    };
+
+    const state = {
+      ready: false,
+      loading: false,
+      data: {
+        first: [],
+        second: []
+      },
+      fields: {
+        first: {},
+        second: {}
+      }
+    };
+
+    const elements = {
+      form: document.getElementById("searchForm"),
+      gradeSelect: document.getElementById("gradeSelect"),
+      searchInput: document.getElementById("searchInput"),
+      searchBtn: document.getElementById("searchBtn"),
+      messageBox: document.getElementById("messageBox"),
+      resultsSection: document.getElementById("resultsSection"),
+      resultsContainer: document.getElementById("resultsContainer"),
+      statusText: document.getElementById("statusText"),
+      statusDot: document.getElementById("statusDot")
+    };
+
+    const FIELD_NAMES = {
+      seat: ["رقم الجلوس", "رقم جلوس", "الجلوس", "رقم", "seat", "seat no", "seating no"],
+      name: ["اسم الطالب", "اسم الطالبة", "اسم التلميذ", "الاسم", "name", "student name"],
+      grade: ["الصف", "الصف الدراسي", "المرحلة", "class", "grade"],
+      branch: ["الشعبة", "القسم", "المسار", "branch", "section"],
+      total: ["المجموع", "المجموع الكلي", "إجمالي", "الاجمالي", "total"],
+      percent: ["النسبة", "النسبة المئوية", "percentage", "percent"],
+      rating: ["التقدير", "المستوى", "grade result", "rating"],
+      status: ["الحالة", "حالة الطالب", "result status", "status"],
+      notes: ["ملاحظات", "ملاحظة", "notes", "remarks"]
+    };
+
+    document.addEventListener("DOMContentLoaded", () => {
+      loadAllDatabases();
+      elements.form.addEventListener("submit", handleSearch);
+      elements.gradeSelect.addEventListener("change", () => {
+        elements.searchInput.value = "";
+        clearResults();
+        showMessage("info", `تم اختيار ${DATABASE_FILES[elements.gradeSelect.value].title}.`);
+        elements.searchInput.focus();
+      });
+    });
+
+    async function loadAllDatabases() {
+      setLoading(true);
+      showMessage("info", "جاري تحميل بيانات النتائج...");
+
+      try {
+        await Promise.all(Object.keys(DATABASE_FILES).map(loadDatabase));
+        state.ready = true;
+        setSystemReady(true);
+        showMessage("success", "الخدمة متاحة الآن. يمكنك الاستعلام عن النتيجة.");
+      } catch (error) {
+        console.error(error);
+        state.ready = false;
+        setSystemReady(false);
+        showMessage("error", "تعذر تحميل قاعدة بيانات النتائج. يرجى المحاولة لاحقًا أو التواصل مع الإدارة المختصة.");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    async function loadDatabase(key) {
+      const response = await fetch(DATABASE_FILES[key].file, { cache: "no-store" });
+      if (!response.ok) throw new Error(`Cannot load ${DATABASE_FILES[key].file}`);
+
+      const arrayBuffer = await response.arrayBuffer();
+      const workbook = XLSX.read(arrayBuffer, { type: "array", cellDates: false });
+      const parsed = parseWorkbook(workbook);
+      state.data[key] = parsed.rows;
+      state.fields[key] = parsed.fields;
+    }
+
+    function parseWorkbook(workbook) {
+      const rows = [];
+      const sheetNames = workbook.SheetNames.filter(name => !/ملخص|summary|احصاء|إحصاء/i.test(name));
+      const selectedSheets = sheetNames.length ? sheetNames : workbook.SheetNames;
+
+      selectedSheets.forEach(sheetName => {
+        const worksheet = workbook.Sheets[sheetName];
+        const sheetRows = XLSX.utils.sheet_to_json(worksheet, { defval: "", raw: true });
+        sheetRows.forEach(row => {
+          const cleaned = cleanRow(row);
+          if (Object.keys(cleaned).length > 0) rows.push(cleaned);
+        });
+      });
+
+      const fields = detectFields(rows);
+      return { rows, fields };
+    }
+
+    function cleanRow(row) {
+      const cleaned = {};
+      Object.entries(row).forEach(([key, value]) => {
+        const cleanKey = String(key || "").trim();
+        if (!cleanKey || cleanKey.startsWith("__EMPTY")) return;
+        cleaned[cleanKey] = value === null || value === undefined ? "" : value;
+      });
+      return cleaned;
+    }
+
+    function detectFields(rows) {
+      const keys = Array.from(new Set(rows.flatMap(row => Object.keys(row))));
+      const fields = {};
+      Object.keys(FIELD_NAMES).forEach(type => {
+        fields[type] = findFieldKey(keys, FIELD_NAMES[type]);
+      });
+      return fields;
+    }
+
+    function findFieldKey(keys, candidates) {
+      const normalizedCandidates = candidates.map(normalizeHeader);
+      return keys.find(key => normalizedCandidates.includes(normalizeHeader(key))) ||
+             keys.find(key => normalizedCandidates.some(candidate => normalizeHeader(key).includes(candidate))) ||
+             "";
+    }
+
+    function handleSearch(event) {
+      event.preventDefault();
+      clearResults();
+
+      const gradeKey = elements.gradeSelect.value;
+      const query = elements.searchInput.value.trim();
+
+      if (!state.ready) {
+        showMessage("warning", "الخدمة ما زالت قيد التجهيز. يرجى الانتظار لحظات.");
+        return;
+      }
+
+      if (!query) {
+        showMessage("warning", "يرجى إدخال رقم الجلوس أو اسم الطالب.");
+        return;
+      }
+
+      const matches = searchStudents(gradeKey, query);
+
+      if (!matches.length) {
+        showMessage("error", "لم يتم العثور على نتيجة مطابقة للبيانات المدخلة.");
+        return;
+      }
+
+      hideMessage();
+      if (matches.length === 1) {
+        renderStudentResult(gradeKey, matches[0]);
+      } else {
+        renderMatchesList(gradeKey, matches.slice(0, 12));
+        showMessage("success", `تم العثور على ${formatArabicNumber(matches.length)} نتيجة مطابقة. اختر الطالب المطلوب لعرض النتيجة.`);
+      }
+    }
+
+    function searchStudents(gradeKey, query) {
+      const rows = state.data[gradeKey] || [];
+      const fields = state.fields[gradeKey] || {};
+      const seatKey = fields.seat;
+      const nameKey = fields.name;
+      const queryDigits = extractDigits(query);
+      const normalizedQuery = normalizeArabic(query);
+
+      if (queryDigits) {
+        return rows.filter(row => extractDigits(row[seatKey]) === queryDigits);
+      }
+
+      return rows.filter(row => {
+        const studentName = normalizeArabic(row[nameKey] || "");
+        if (!studentName || !normalizedQuery) return false;
+        return studentName.includes(normalizedQuery) || normalizedQuery.includes(studentName);
+      });
+    }
+
+    function renderMatchesList(gradeKey, matches) {
+      const fields = state.fields[gradeKey];
+      const html = `
+        <div class="matches-grid">
+          ${matches.map((row, index) => {
+            const name = displayValue(row[fields.name]);
+            const seat = displayValue(row[fields.seat]);
+            const group = displayValue(row[fields.branch] || row[fields.grade] || DATABASE_FILES[gradeKey].title);
+            return `
+              <article class="match-card">
+                <div>
+                  <h4>${escapeHtml(name)}</h4>
+                  <p>
+                    <span><i class="fa-solid fa-hashtag"></i> ${escapeHtml(seat)}</span>
+                    <span><i class="fa-solid fa-layer-group"></i> ${escapeHtml(group)}</span>
+                  </p>
+                </div>
+                <button class="tiny-btn" type="button" onclick="renderStudentResult('${gradeKey}', state.data['${gradeKey}'][${state.data[gradeKey].indexOf(row)}])">عرض النتيجة</button>
+              </article>
+            `;
+          }).join("")}
+        </div>
+      `;
+
+      elements.resultsContainer.innerHTML = html;
+      elements.resultsSection.classList.add("show");
+      elements.resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function renderStudentResult(gradeKey, row) {
+      const fields = state.fields[gradeKey];
+      const name = displayValue(row[fields.name]);
+      const seat = displayValue(row[fields.seat]);
+      const grade = displayValue(row[fields.grade] || DATABASE_FILES[gradeKey].title);
+      const branch = displayValue(row[fields.branch]);
+      const total = formatCell(row[fields.total], fields.total);
+      const percent = formatCell(row[fields.percent], fields.percent);
+      const rating = formatCell(row[fields.rating], fields.rating);
+      const status = formatCell(row[fields.status], fields.status);
+      const notes = displayValue(row[fields.notes]);
+      const isPass = !/راسب|غير ناجح|دور|غائب/i.test(String(status));
+      const subjectRows = getSubjectRows(row, fields);
+
+      const html = `
+        <article class="result-card">
+          <div class="result-top">
+            <div class="student-block">
+              <h3>${escapeHtml(name)}</h3>
+              <div class="student-meta">
+                <span><i class="fa-solid fa-hashtag"></i> رقم الجلوس: ${escapeHtml(seat)}</span>
+                <span><i class="fa-solid fa-school"></i> ${escapeHtml(grade)}</span>
+                ${branch ? `<span><i class="fa-solid fa-layer-group"></i> ${escapeHtml(branch)}</span>` : ""}
+              </div>
+            </div>
+            <div class="status-large ${isPass ? "pass" : "fail"}">
+              <i class="fa-solid ${isPass ? "fa-circle-check" : "fa-circle-xmark"}"></i>
+              ${escapeHtml(status || "تم إعلان النتيجة")}
             </div>
           </div>
 
           <div class="summary-grid">
-            <div class="summary-item"><span>المجموع</span><strong>${toDisplay(summary.total)}</strong></div>
-            <div class="summary-item"><span>النسبة</span><strong>${toDisplay(summary.percent)}</strong></div>
-            <div class="summary-item"><span>التقدير</span><strong>${toDisplay(summary.grade)}</strong></div>
-            <div class="summary-item"><span>الحالة</span><strong>${toDisplay(summary.status)}</strong></div>
+            <div class="summary-card">
+              <div class="summary-icon"><i class="fa-solid fa-calculator"></i></div>
+              <div><small>المجموع</small><strong>${escapeHtml(total)}</strong></div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-icon"><i class="fa-solid fa-percent"></i></div>
+              <div><small>النسبة</small><strong>${escapeHtml(percent)}</strong></div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-icon"><i class="fa-solid fa-award"></i></div>
+              <div><small>التقدير</small><strong>${escapeHtml(rating)}</strong></div>
+            </div>
           </div>
 
-          <div class="marks-wrap">
-            <table>
+          <div class="table-wrap">
+            <table aria-label="درجات الطالب">
               <thead>
                 <tr>
-                  <th>المادة / البند</th>
+                  <th>المادة</th>
                   <th>الدرجة</th>
                 </tr>
               </thead>
               <tbody>
-                ${tableRows || `<tr><td colspan="2">لا توجد درجات تفصيلية متاحة</td></tr>`}
+                ${subjectRows.map(item => `
+                  <tr>
+                    <td>${escapeHtml(item.subject)}</td>
+                    <td><span class="degree-value">${escapeHtml(item.value)}</span></td>
+                  </tr>
+                `).join("")}
               </tbody>
             </table>
           </div>
+
+          ${notes ? `
+            <div class="notes-box">
+              <i class="fa-solid fa-circle-exclamation"></i>
+              <div>${escapeHtml(notes)}</div>
+            </div>
+          ` : ""}
+
+          <div class="action-row">
+            <button class="secondary-btn" type="button" onclick="window.print()"><i class="fa-solid fa-print"></i> طباعة النتيجة</button>
+            <button class="secondary-btn" type="button" onclick="resetSearch()"><i class="fa-solid fa-rotate-right"></i> استعلام جديد</button>
+          </div>
         </article>
       `;
+
+      elements.resultsContainer.innerHTML = html;
+      elements.resultsSection.classList.add("show");
+      elements.resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
-    function renderResults(items) {
-      results.innerHTML = items.map(renderStudentCard).join("");
+    function getSubjectRows(row, fields) {
+      const excluded = new Set(Object.values(fields).filter(Boolean));
+      return Object.entries(row)
+        .filter(([key, value]) => !excluded.has(key) && hasValue(value))
+        .map(([key, value]) => ({ subject: key, value: formatCell(value, key) }));
     }
 
-    searchForm.addEventListener("submit", function (event) {
-      event.preventDefault();
-      results.innerHTML = "";
+    function hasValue(value) {
+      return value !== null && value !== undefined && String(value).trim() !== "";
+    }
 
-      if (!loaded) {
-        showMessage("الملفات لم يتم تحميلها بعد. تأكد من تشغيل الصفحة من سيرفر محلي.", "error");
-        return;
+    function formatCell(value, key = "") {
+      if (!hasValue(value)) return "—";
+      const label = String(key || "");
+
+      if (typeof value === "number") {
+        if (/النسبة|percent|percentage/i.test(label)) {
+          const percent = value <= 1 ? value * 100 : value;
+          return `${formatArabicNumber(percent, 2)}%`;
+        }
+        return formatArabicNumber(value, Number.isInteger(value) ? 0 : 2);
       }
 
-      const query = queryInput.value.trim();
-      const gradeKey = gradeSelect.value;
-
-      if (!query) {
-        showMessage("اكتب رقم الجلوس أو اسم الطالب أولًا.", "error");
-        queryInput.focus();
-        return;
+      const text = String(value).trim();
+      const numeric = Number(text);
+      if (text !== "" && !Number.isNaN(numeric) && /^\d+(\.\d+)?$/.test(text)) {
+        if (/النسبة|percent|percentage/i.test(label)) {
+          const percent = numeric <= 1 ? numeric * 100 : numeric;
+          return `${formatArabicNumber(percent, 2)}%`;
+        }
+        return formatArabicNumber(numeric, Number.isInteger(numeric) ? 0 : 2);
       }
+      return text;
+    }
 
-      const found = searchStudents(query, gradeKey);
+    function displayValue(value) {
+      return hasValue(value) ? formatCell(value) : "";
+    }
 
-      if (!found.length) {
-        showMessage("لم يتم العثور على نتيجة مطابقة. تأكد من رقم الجلوس أو اكتب جزءًا أكبر من الاسم.", "error");
-        return;
-      }
+    function normalizeHeader(value) {
+      return normalizeArabic(value).replace(/\s+/g, " ").trim();
+    }
 
-      clearMessage();
-      showMessage(`تم العثور على ${found.length.toLocaleString("ar-EG")} نتيجة مطابقة.`, "success");
-      renderResults(found);
-    });
+    function normalizeArabic(value) {
+      return toEnglishDigits(String(value || ""))
+        .replace(/[\u064B-\u065F\u0670]/g, "")
+        .replace(/[إأآا]/g, "ا")
+        .replace(/ى/g, "ي")
+        .replace(/ة/g, "ه")
+        .replace(/ؤ/g, "و")
+        .replace(/ئ/g, "ي")
+        .replace(/[ـ]/g, "")
+        .replace(/[^\u0600-\u06FFa-zA-Z0-9\s]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim()
+        .toLowerCase();
+    }
 
-    queryInput.addEventListener("input", () => {
-      if (queryInput.value.trim() === "") results.innerHTML = "";
-    });
+    function toEnglishDigits(value) {
+      return String(value || "")
+        .replace(/[٠-٩]/g, digit => "٠١٢٣٤٥٦٧٨٩".indexOf(digit))
+        .replace(/[۰-۹]/g, digit => "۰۱۲۳۴۵۶۷۸۹".indexOf(digit));
+    }
 
-    window.addEventListener("DOMContentLoaded", loadAllFiles);
+    function extractDigits(value) {
+      return toEnglishDigits(value).replace(/[^0-9]/g, "");
+    }
+
+    function formatArabicNumber(value, decimals = 0) {
+      const number = Number(value);
+      if (Number.isNaN(number)) return String(value ?? "");
+      return new Intl.NumberFormat("ar-EG", {
+        minimumFractionDigits: decimals && !Number.isInteger(number) ? 0 : 0,
+        maximumFractionDigits: decimals
+      }).format(number);
+    }
+
+    function showMessage(type, text) {
+      elements.messageBox.className = `message ${type} show`;
+      elements.messageBox.innerHTML = `<i class="fa-solid ${messageIcon(type)}"></i><span>${escapeHtml(text)}</span>`;
+    }
+
+    function hideMessage() {
+      elements.messageBox.classList.remove("show");
+    }
+
+    function messageIcon(type) {
+      return {
+        info: "fa-circle-info",
+        success: "fa-circle-check",
+        warning: "fa-triangle-exclamation",
+        error: "fa-circle-xmark"
+      }[type] || "fa-circle-info";
+    }
+
+    function setLoading(isLoading) {
+      state.loading = isLoading;
+      elements.searchBtn.disabled = isLoading;
+      elements.searchBtn.innerHTML = isLoading
+        ? `<span class="loader"></span> جاري التحميل`
+        : `<i class="fa-solid fa-search"></i> عرض النتيجة`;
+    }
+
+    function setSystemReady(isReady) {
+      elements.statusDot.classList.toggle("ready", isReady);
+      elements.statusText.textContent = isReady ? "الخدمة متاحة الآن" : "الخدمة غير متاحة";
+    }
+
+    function clearResults() {
+      elements.resultsContainer.innerHTML = "";
+      elements.resultsSection.classList.remove("show");
+    }
+
+    function resetSearch() {
+      elements.searchInput.value = "";
+      clearResults();
+      showMessage("success", "يمكنك إجراء استعلام جديد الآن.");
+      elements.searchInput.focus();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
   </script>
 </body>
 </html>
