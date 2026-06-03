@@ -890,6 +890,45 @@ function newSearch(){
 
 document.getElementById('searchInput').addEventListener('keydown',function(e){if(e.key==='Enter')handleSearch();});
 
+// ── PRINT HELPERS ──
+function printHTMLDocument(html,title){
+  var old=document.getElementById('printFrame');
+  if(old) old.remove();
+
+  var iframe=document.createElement('iframe');
+  iframe.id='printFrame';
+  iframe.setAttribute('aria-hidden','true');
+  iframe.style.position='fixed';
+  iframe.style.left='-10000px';
+  iframe.style.top='0';
+  iframe.style.width='0';
+  iframe.style.height='0';
+  iframe.style.border='0';
+  document.body.appendChild(iframe);
+
+  var doc=iframe.contentWindow.document;
+  doc.open();
+  doc.write(html);
+  doc.close();
+
+  var triggerPrint=function(){
+    try{ doc.title=title||''; }catch(e){}
+    setTimeout(function(){
+      iframe.contentWindow.focus();
+      iframe.contentWindow.print();
+      setTimeout(function(){
+        if(iframe&&iframe.parentNode) iframe.parentNode.removeChild(iframe);
+      },800);
+    },250);
+  };
+
+  if(iframe.contentWindow.document.readyState==='complete'){
+    triggerPrint();
+  }else{
+    iframe.onload=triggerPrint;
+  }
+}
+
 // ── PRINT RESULT ──
 function printResult(){
   if(!currentStudent) return;
@@ -918,6 +957,7 @@ function printResult(){
   var html='<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8">'
     +'<title>نتيجة الطالب</title>'
     +'<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700;800;900&display=swap" rel="stylesheet">'
+    +'<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">'
     +'<style>'
     +'*{box-sizing:border-box;margin:0;padding:0}'
     +'html,body{font-family:Tajawal,sans-serif;direction:rtl;background:#fff}'
@@ -925,6 +965,7 @@ function printResult(){
     +'body{padding:0;margin:0}'
     +'.bar{height:5px;background:linear-gradient(90deg,#8c3318,#b94a28,#d4923a);margin-bottom:10px}'
     +'.top{text-align:center;margin-bottom:10px}'
+    +'.doc-icon{font-size:1.5rem;color:#b94a28;margin-bottom:4px}'
     +'.doc-title{font-size:1.3rem;font-weight:900;color:#3b1a0e;margin-bottom:2px}'
     +'.sub{font-size:.75rem;color:#7a5a48;font-weight:600}'
     +'.div{width:50px;height:2px;background:linear-gradient(90deg,#b94a28,#d4923a);margin:5px auto 10px;border-radius:2px}'
@@ -945,7 +986,7 @@ function printResult(){
     +'</style></head><body>'
     +'<div class="bar"></div>'
     +'<div class="top">'
-    +'<div style="font-size:1.8rem;margin-bottom:3px">&#127891;</div>'
+    +'<div class="doc-icon"><i class="fa-solid fa-file-lines"></i></div>'
     +'<div class="doc-title">بيان نتيجة طالب</div>'
     +'<div class="sub">الفاروق الثانوية بنين &mdash; وزارة التربية والتعليم</div>'
     +'<div class="div"></div></div>'
@@ -978,10 +1019,7 @@ function printResult(){
     +'<div class="bb"></div>'
     +'</body></html>';
 
-  var w=window.open('','_blank','width=900,height=700');
-  w.document.write(html);w.document.close();
-  w.document.title='نتيجة الطالب';
-  w.onload=function(){w.print();};
+  printHTMLDocument(html,'نتيجة الطالب');
 }
 
 // ── PRINT CERTIFICATE ──
@@ -1011,6 +1049,7 @@ function printCertificate(){
   var html='<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8">'
     +'<title>شهادة الطالب</title>'
     +'<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">'
+    +'<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">'
     +'<style>'
     +'*{box-sizing:border-box;margin:0;padding:0}'
     +'html,body{width:100%;height:100%;font-family:Tajawal,sans-serif;direction:rtl;background:#f6f1ea;color:#3b1a0e}'
@@ -1029,8 +1068,10 @@ function printCertificate(){
     +'.header{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}'
     +'.seal,.award{width:102px;display:flex;justify-content:center}'
     +'.seal-badge,.award-badge{width:86px;height:86px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#fef6e8 0%,#f0d9ad 55%,#d6a14f 100%);border:3px solid #b7771d;box-shadow:0 4px 14px rgba(122,62,42,.18), inset 0 0 0 4px rgba(255,255,255,.45);display:flex;align-items:center;justify-content:center;color:#8c3318;font-size:34px;font-weight:900}'
+    +'.seal-badge i,.award-badge i{font-size:36px}'
     +'.title-zone{flex:1;padding-top:2px}'
     +'.stars{font-size:18px;letter-spacing:8px;color:#b7771d;margin-bottom:4px}'
+    +'.stars i{margin:0 4px}'
     +'.school{font-size:13px;font-weight:700;color:#8f6b56;margin-bottom:4px}'
     +'.main-title{font-size:35px;font-weight:900;color:#8c3318;line-height:1.05;letter-spacing:.2px}'
     +'.sub-title{font-size:12px;font-weight:700;color:#9b7865;margin-top:3px}'
@@ -1051,8 +1092,8 @@ function printCertificate(){
     +'.meta-card.highlight .meta-value{color:#8c3318}'
     +'.bottom{margin-top:14px}'
     +'.quote{font-size:12px;font-weight:600;color:#9d7f69;margin-bottom:12px}'
-    +'.signs{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin-top:6px}'
-    +'.sign-col{width:28%;text-align:center}'
+    +'.signs{display:flex;justify-content:space-between;align-items:flex-end;gap:28px;margin-top:6px}'
+    +'.sign-col{width:38%;text-align:center}'
     +'.sign-line{height:1px;background:linear-gradient(90deg,transparent,#c59b73,transparent);margin:0 0 7px}'
     +'.sign-text{font-size:12px;font-weight:700;color:#7f5d48}'
     +'.footer-line{margin-top:8px;padding-top:8px;border-top:1px solid rgba(185,74,40,.18);display:flex;justify-content:space-between;align-items:center;font-size:11px;color:#9c826f}'
@@ -1062,15 +1103,15 @@ function printCertificate(){
     +'<div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>'
     +'<div class="wrap">'
     +'<div class="header">'
-    +'<div class="award"><div class="award-badge">★</div></div>'
+    +'<div class="award"><div class="award-badge"><i class="fa-solid fa-award"></i></div></div>'
     +'<div class="title-zone">'
-    +'<div class="stars">★ ★ ★</div>'
+    +'<div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>'
     +'<div class="school">الفاروق الثانوية بنين</div>'
     +'<div class="main-title">'+badgeTitle+'</div>'
     +'<div class="sub-title">Certificate of Excellence &amp; Appreciation</div>'
     +'<div class="title-line"></div>'
     +'</div>'
-    +'<div class="seal"><div class="seal-badge">🏅</div></div>'
+    +'<div class="seal"><div class="seal-badge"><i class="fa-solid fa-medal"></i></div></div>'
     +'</div>'
     +'<div class="body-copy">'
     +'<div class="lead">تُمنح هذه الشهادة إلى الطالب</div>'
@@ -1088,17 +1129,13 @@ function printCertificate(){
     +'<div class="quote">نتمنى له دوام التوفيق والنجاح ومزيدًا من التقدم والتميّز.</div>'
     +'<div class="signs">'
     +'<div class="sign-col"><div class="sign-line"></div><div class="sign-text">توقيع مدير المدرسة</div></div>'
-    +'<div class="sign-col"><div class="sign-line"></div><div class="sign-text">المرشد الأكاديمي</div></div>'
     +'<div class="sign-col"><div class="sign-line"></div><div class="sign-text">ختم المدرسة</div></div>'
     +'</div>'
     +'<div class="footer-line"><div>تاريخ الإصدار: '+today+'</div><div class="serial">الحالة الدراسية: '+status+'</div></div>'
     +'</div>'
     +'</div></div></div></body></html>';
 
-  var w=window.open('','_blank','width=1200,height=850');
-  w.document.write(html);w.document.close();
-  w.document.title='شهادة الطالب';
-  w.onload=function(){w.print();};
+  printHTMLDocument(html,'شهادة الطالب');
 }
 </script>
 </body>
