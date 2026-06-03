@@ -898,7 +898,7 @@ function printResult(){
   var grade  =cv(rec,cm.grade)     ||currentGradeLabel;
   var section=cv(rec,cm.section)   ||'—';
   var total  =cv(rec,cm.total)     ||'—';
-  var pct    =formatPct(cv(rec,cm.percent))   ||'—';
+  var pct    =formatPct(cv(rec,cm.percent)) ||'—';
   var glabel =cv(rec,cm.gradeLabel)||'—';
   var status =cv(rec,cm.status)    ||'—';
   var notes  =cv(rec,cm.notes)     ||'';
@@ -908,41 +908,47 @@ function printResult(){
   var rows='';
   cm.subjects.forEach(function(sub,i){
     var v=cv(rec,sub.idx)||'—';
-    rows+='<tr style="background:'+(i%2===0?'#fdf6ef':'#fff')+'"><td style="text-align:right;padding:10px 16px;font-weight:700;border:1px solid #e8d5b7;color:#3b1a0e">'+sub.name+'</td><td style="text-align:center;padding:10px 16px;border:1px solid #e8d5b7;font-weight:800;color:#7a3e2a">'+v+'</td></tr>';
+    rows+='<tr style="background:'+(i%2===0?'#fdf6ef':'#fff')+'">'
+      +'<td style="text-align:right;padding:5px 10px;font-weight:700;border:1px solid #e8d5b7;color:#3b1a0e;font-size:.8rem">'+sub.name+'</td>'
+      +'<td style="text-align:center;padding:5px 10px;border:1px solid #e8d5b7;font-weight:800;color:#7a3e2a;font-size:.8rem">'+v+'</td>'
+      +'</tr>';
   });
 
   var html='<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8">'
     +'<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700;800;900&display=swap" rel="stylesheet">'
-    +'<style>*{box-sizing:border-box;margin:0;padding:0}'
-    +'body{font-family:Tajawal,sans-serif;direction:rtl;background:#fff}'
-    +'@media print{@page{size:A4 portrait;margin:12mm}}'
-    +'.page{max-width:210mm;margin:0 auto;padding:16mm}'
-    +'.bar{height:7px;background:linear-gradient(90deg,#8c3318,#b94a28,#d4923a);border-radius:4px;margin-bottom:18px}'
-    +'.top{text-align:center;margin-bottom:20px}'
-    +'.doc-title{font-size:1.7rem;font-weight:900;color:#3b1a0e;margin-bottom:4px}'
-    +'.sub{font-size:.82rem;color:#7a5a48;font-weight:600}'
-    +'.div{width:60px;height:3px;background:linear-gradient(90deg,#b94a28,#d4923a);margin:8px auto 18px;border-radius:2px}'
-    +'.ig{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}'
-    +'.ii{background:#fdf6ef;border:1.5px solid #e8d5b7;border-radius:8px;padding:10px 14px}'
+    +'<style>'
+    +'*{box-sizing:border-box;margin:0;padding:0}'
+    +'html,body{font-family:Tajawal,sans-serif;direction:rtl;background:#fff}'
+    +'@page{size:A4 portrait;margin:8mm}'
+    +'body{padding:0;margin:0}'
+    +'.bar{height:5px;background:linear-gradient(90deg,#8c3318,#b94a28,#d4923a);margin-bottom:10px}'
+    +'.top{text-align:center;margin-bottom:10px}'
+    +'.doc-title{font-size:1.3rem;font-weight:900;color:#3b1a0e;margin-bottom:2px}'
+    +'.sub{font-size:.75rem;color:#7a5a48;font-weight:600}'
+    +'.div{width:50px;height:2px;background:linear-gradient(90deg,#b94a28,#d4923a);margin:5px auto 10px;border-radius:2px}'
+    +'.ig{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px}'
+    +'.ii{background:#fdf6ef;border:1px solid #e8d5b7;border-radius:6px;padding:6px 10px}'
     +'.ii.full{grid-column:span 2}'
-    +'.ii label{font-size:.72rem;color:#b94a28;font-weight:700;display:block;margin-bottom:2px}'
-    +'.ii span{font-size:.97rem;font-weight:800;color:#3b1a0e}'
-    +'.st{font-size:1.05rem!important;color:'+(isPass?'#1a6b3a':'#b94a28')+'!important}'
-    +'.st-title{font-size:.92rem;font-weight:800;color:#3b1a0e;margin-bottom:8px;padding-bottom:6px;border-bottom:2px solid #e8d5b7}'
-    +'.sign{display:flex;justify-content:space-between;margin-top:32px}'
-    +'.sc{text-align:center;width:180px}'
-    +'.sl{border-top:1.5px solid #c8a888;padding-top:6px;font-size:.78rem;color:#7a5a48;font-weight:700;margin-top:48px}'
-    +'.dt{text-align:center;font-size:.76rem;color:#b08878;margin-top:12px}'
-    +'.bb{height:4px;background:linear-gradient(90deg,#8c3318,#b94a28,#d4923a);border-radius:2px;margin-top:20px}'
-    +'</style></head><body><div class="page">'
+    +'.ii label{font-size:.66rem;color:#b94a28;font-weight:700;display:block;margin-bottom:1px}'
+    +'.ii span{font-size:.85rem;font-weight:800;color:#3b1a0e}'
+    +'.st{color:'+(isPass?'#1a6b3a':'#b94a28')+'!important}'
+    +'.st-title{font-size:.8rem;font-weight:800;color:#3b1a0e;margin-bottom:5px;padding-bottom:4px;border-bottom:1.5px solid #e8d5b7}'
+    +'table{width:100%;border-collapse:collapse;margin-bottom:8px;border:1px solid #e8d5b7;page-break-inside:auto}'
+    +'tr{page-break-inside:avoid}'
+    +'.sign{display:flex;justify-content:space-between;margin-top:16px}'
+    +'.sc{text-align:center;width:160px}'
+    +'.sl{border-top:1px solid #c8a888;padding-top:4px;font-size:.7rem;color:#7a5a48;font-weight:700;margin-top:36px}'
+    +'.dt{text-align:center;font-size:.68rem;color:#b08878;margin-top:8px}'
+    +'.bb{height:3px;background:linear-gradient(90deg,#8c3318,#b94a28,#d4923a);margin-top:10px}'
+    +'</style></head><body>'
     +'<div class="bar"></div>'
     +'<div class="top">'
-    +'<div style="font-size:2.4rem;margin-bottom:6px">&#127891;</div>'
+    +'<div style="font-size:1.8rem;margin-bottom:3px">&#127891;</div>'
     +'<div class="doc-title">بيان نتيجة طالب</div>'
     +'<div class="sub">الفاروق الثانوية بنين &mdash; وزارة التربية والتعليم</div>'
     +'<div class="div"></div></div>'
     +'<div class="ig">'
-    +'<div class="ii full"><label>اسم الطالب</label><span style="font-size:1.15rem">'+name+'</span></div>'
+    +'<div class="ii full"><label>اسم الطالب</label><span style="font-size:1rem">'+name+'</span></div>'
     +'<div class="ii"><label>رقم الجلوس</label><span>'+seat+'</span></div>'
     +'<div class="ii"><label>الصف الدراسي</label><span>'+grade+'</span></div>'
     +'<div class="ii"><label>الشعبة</label><span>'+section+'</span></div>'
@@ -954,18 +960,21 @@ function printResult(){
 
   if(cm.subjects.length>0){
     html+='<div class="st-title">جدول المواد والدرجات</div>'
-      +'<table style="width:100%;border-collapse:collapse;margin-bottom:14px;border:1px solid #e8d5b7">'
+      +'<table>'
       +'<thead><tr style="background:linear-gradient(135deg,#8c3318,#b94a28);color:#fff">'
-      +'<th style="padding:10px 16px;text-align:right;font-size:.83rem">المادة</th>'
-      +'<th style="padding:10px 16px;text-align:center;font-size:.83rem">الدرجة</th>'
+      +'<th style="padding:6px 10px;text-align:right;font-size:.75rem">المادة</th>'
+      +'<th style="padding:6px 10px;text-align:center;font-size:.75rem">الدرجة</th>'
       +'</tr></thead><tbody>'+rows+'</tbody></table>';
   }
-  if(notes) html+='<div style="background:#fdf6ef;border:1.5px solid #e8d5b7;border-radius:8px;padding:12px 16px;font-size:.86rem;color:#7a4800;font-weight:600"><strong>ملاحظات: </strong>'+notes+'</div>';
+  if(notes) html+='<div style="background:#fdf6ef;border:1px solid #e8d5b7;border-radius:6px;padding:7px 12px;font-size:.76rem;color:#7a4800;font-weight:600;margin-bottom:6px"><strong>ملاحظات: </strong>'+notes+'</div>';
 
-  html+='<div class="sign"><div class="sc"><div class="sl">ختم المدرسة</div></div>'
-    +'<div class="sc"><div class="sl">توقيع مدير المدرسة</div></div></div>'
+  html+='<div class="sign">'
+    +'<div class="sc"><div class="sl">ختم المدرسة</div></div>'
+    +'<div class="sc"><div class="sl">توقيع مدير المدرسة</div></div>'
+    +'</div>'
     +'<div class="dt">تاريخ الإصدار: '+today+'</div>'
-    +'<div class="bb"></div></div></body></html>';
+    +'<div class="bb"></div>'
+    +'</body></html>';
 
   var w=window.open('','_blank','width=900,height=700');
   w.document.write(html);w.document.close();
@@ -979,64 +988,86 @@ function printCertificate(){
   var name  =cv(rec,cm.name)      ||'—';
   var grade =cv(rec,cm.grade)     ||currentGradeLabel;
   var total =cv(rec,cm.total)     ||'—';
-  var pct   =formatPct(cv(rec,cm.percent))   ||'—';
+  var pct   =formatPct(cv(rec,cm.percent)) ||'—';
   var glabel=cv(rec,cm.gradeLabel)||'—';
   var today =new Date().toLocaleDateString('ar-EG',{year:'numeric',month:'long',day:'numeric'});
 
   var html='<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8">'
     +'<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700;800;900&display=swap" rel="stylesheet">'
-    +'<style>*{box-sizing:border-box;margin:0;padding:0}'
-    +'body{font-family:Tajawal,sans-serif;direction:rtl;background:#fdf6ef}'
-    +'@media print{@page{size:A4 landscape;margin:0}body{margin:0}}'
-    +'.cert{width:100vw;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px}'
-    +'.inn{width:100%;max-width:272mm;min-height:178mm;background:#fff;position:relative;padding:44px 60px;text-align:center;'
-    +'border:10px solid #b94a28;'
-    +'box-shadow:0 0 0 4px #fff,0 0 0 8px rgba(185,74,40,.18),inset 0 0 50px rgba(185,74,40,.03)}'
-    +'.inn::before{content:"";position:absolute;inset:16px;border:1.5px solid rgba(185,74,40,.2);pointer-events:none}'
-    +'.co{position:absolute;width:55px;height:55px}'
-    +'.tl{top:22px;right:22px;border-top:3px solid #b94a28;border-right:3px solid #b94a28;border-radius:0 8px 0 0}'
-    +'.tr{top:22px;left:22px;border-top:3px solid #b94a28;border-left:3px solid #b94a28;border-radius:8px 0 0 0}'
-    +'.bl{bottom:22px;right:22px;border-bottom:3px solid #b94a28;border-right:3px solid #b94a28;border-radius:0 0 0 8px}'
-    +'.br{bottom:22px;left:22px;border-bottom:3px solid #b94a28;border-left:3px solid #b94a28;border-radius:0 0 8px 0}'
-    +'.stars{font-size:1.6rem;color:#c4813a;letter-spacing:7px;margin-bottom:10px}'
-    +'.ct{font-size:2.2rem;font-weight:900;color:#8c3318;margin-bottom:2px}'
-    +'.cen{font-size:.88rem;color:#b08878;font-weight:600;margin-bottom:14px}'
-    +'.cdiv{width:80px;height:3px;background:linear-gradient(90deg,#8c3318,#d4923a);margin:0 auto 16px;border-radius:2px}'
-    +'.cpre{font-size:.88rem;color:#7a5a48;margin-bottom:6px;font-weight:600}'
-    +'.cname{font-size:2.8rem;font-weight:900;color:#3b1a0e;margin-bottom:18px;padding:8px 0;border-top:2px solid #e8d5b7;border-bottom:2px solid #e8d5b7}'
-    +'.cbody{font-size:.88rem;color:#7a5a48;line-height:2;max-width:520px;margin:0 auto 20px;font-weight:500}'
-    +'.meta{display:flex;justify-content:center;gap:26px;flex-wrap:wrap;margin-bottom:22px}'
-    +'.mi{text-align:center;background:#fdf6ef;border:1px solid #e8d5b7;border-radius:10px;padding:10px 18px;min-width:110px}'
-    +'.ml{font-size:.7rem;color:#b94a28;font-weight:700;margin-bottom:3px}'
-    +'.mv{font-size:1rem;font-weight:900;color:#3b1a0e}'
-    +'.sign{display:flex;justify-content:space-between;margin-top:20px}'
-    +'.sc{text-align:center;min-width:140px}'
-    +'.sl{border-top:1.5px solid #c8a888;padding-top:6px;font-size:.75rem;color:#b08878;font-weight:700;margin-top:48px}'
-    +'.dt{position:absolute;bottom:16px;left:0;right:0;font-size:.72rem;color:#d4c0b0;text-align:center}'
+    +'<style>'
+    +'*{box-sizing:border-box;margin:0;padding:0}'
+    +'html,body{font-family:Tajawal,sans-serif;direction:rtl;width:100%;height:100%}'
+    +'@page{size:A4 landscape;margin:0}'
+    +'body{margin:0;padding:0;background:#fff}'
+    +'.cert{'
+    +'  width:297mm;height:210mm;'
+    +'  display:flex;align-items:center;justify-content:center;'
+    +'  background:#fff;overflow:hidden;'
+    +'}'
+    +'.inn{'
+    +'  width:277mm;height:190mm;'
+    +'  background:#fff;position:relative;'
+    +'  padding:14mm 18mm 10mm;'
+    +'  text-align:center;'
+    +'  border:8px solid #b94a28;'
+    +'  display:flex;flex-direction:column;justify-content:space-between;'
+    +'  overflow:hidden;'
+    +'}'
+    +'.inn::before{content:"";position:absolute;inset:12px;border:1.5px solid rgba(185,74,40,.2);pointer-events:none;z-index:0}'
+    +'.co{position:absolute;width:44px;height:44px;z-index:1}'
+    +'.tl{top:16px;right:16px;border-top:2.5px solid #b94a28;border-right:2.5px solid #b94a28;border-radius:0 6px 0 0}'
+    +'.tr{top:16px;left:16px;border-top:2.5px solid #b94a28;border-left:2.5px solid #b94a28;border-radius:6px 0 0 0}'
+    +'.bl{bottom:16px;right:16px;border-bottom:2.5px solid #b94a28;border-right:2.5px solid #b94a28;border-radius:0 0 0 6px}'
+    +'.br{bottom:16px;left:16px;border-bottom:2.5px solid #b94a28;border-left:2.5px solid #b94a28;border-radius:0 0 6px 0}'
+    +'.top-sec{position:relative;z-index:1}'
+    +'.stars{font-size:1.2rem;color:#c4813a;letter-spacing:6px;margin-bottom:4px}'
+    +'.school{font-size:.72rem;color:#b08878;font-weight:700;margin-bottom:2px}'
+    +'.ct{font-size:1.7rem;font-weight:900;color:#8c3318;margin-bottom:1px;line-height:1.1}'
+    +'.cen{font-size:.72rem;color:#b08878;font-weight:600;margin-bottom:6px}'
+    +'.cdiv{width:60px;height:2px;background:linear-gradient(90deg,#8c3318,#d4923a);margin:0 auto 6px;border-radius:2px}'
+    +'.mid-sec{position:relative;z-index:1}'
+    +'.cpre{font-size:.75rem;color:#7a5a48;margin-bottom:3px;font-weight:600}'
+    +'.cname{font-size:2rem;font-weight:900;color:#3b1a0e;padding:4px 0;border-top:1.5px solid #e8d5b7;border-bottom:1.5px solid #e8d5b7;line-height:1.2}'
+    +'.bot-sec{position:relative;z-index:1}'
+    +'.meta{display:flex;justify-content:center;gap:14px;margin:8px 0}'
+    +'.mi{text-align:center;background:#fdf6ef;border:1px solid #e8d5b7;border-radius:8px;padding:5px 14px;min-width:90px}'
+    +'.ml{font-size:.62rem;color:#b94a28;font-weight:700;margin-bottom:2px}'
+    +'.mv{font-size:.88rem;font-weight:900;color:#3b1a0e}'
+    +'.sign{display:flex;justify-content:space-between;margin-top:6px}'
+    +'.sc{text-align:center;min-width:120px}'
+    +'.sl{border-top:1px solid #c8a888;padding-top:4px;font-size:.66rem;color:#b08878;font-weight:700;margin-top:28px}'
+    +'.dt{font-size:.62rem;color:#d4c0b0;text-align:center;margin-top:4px}'
     +'</style></head><body>'
     +'<div class="cert"><div class="inn">'
     +'<div class="co tl"></div><div class="co tr"></div>'
     +'<div class="co bl"></div><div class="co br"></div>'
+    +'<div class="top-sec">'
     +'<div class="stars">&#9733; &#9733; &#9733;</div>'
-    +'<div style="font-size:.8rem;color:#b08878;font-weight:700;margin-bottom:4px">الفاروق الثانوية بنين</div>'
+    +'<div class="school">الفاروق الثانوية بنين</div>'
     +'<div class="ct">شهادة تقدير وامتياز</div>'
     +'<div class="cen">Certificate of Excellence &amp; Appreciation</div>'
     +'<div class="cdiv"></div>'
+    +'</div>'
+    +'<div class="mid-sec">'
     +'<div class="cpre">يُشهد بأن الطالب المتميز</div>'
     +'<div class="cname">'+name+'</div>'
-    +'<div class="cbody">قد أثبت تفوقًا وجدارةً في مسيرته التعليمية،<br>وأبدى مستوىً أكاديميًا رفيعًا يستحق عليه كلّ تقدير وامتنان،<br>فنمنحه هذه الشهادة تكريمًا لجهوده واعترافًا بتحصيله المتميز.</div>'
+    +'</div>'
+    +'<div class="bot-sec">'
     +'<div class="meta">'
     +'<div class="mi"><div class="ml">الصف الدراسي</div><div class="mv">'+grade+'</div></div>'
     +'<div class="mi"><div class="ml">المجموع</div><div class="mv">'+total+'</div></div>'
     +'<div class="mi"><div class="ml">النسبة</div><div class="mv">'+pct+'</div></div>'
     +'<div class="mi"><div class="ml">التقدير</div><div class="mv">'+glabel+'</div></div>'
     +'</div>'
-    +'<div class="sign"><div class="sc"><div class="sl">ختم المدرسة</div></div>'
-    +'<div class="sc"><div class="sl">توقيع مدير المدرسة</div></div></div>'
+    +'<div class="sign">'
+    +'<div class="sc"><div class="sl">ختم المدرسة</div></div>'
+    +'<div class="sc"><div class="sl">توقيع مدير المدرسة</div></div>'
+    +'</div>'
     +'<div class="dt">تاريخ الإصدار: '+today+'</div>'
+    +'</div>'
     +'</div></div></body></html>';
 
-  var w=window.open('','_blank','width=1000,height=760');
+  var w=window.open('','_blank','width=1100,height=800');
   w.document.write(html);w.document.close();
   w.onload=function(){w.print();};
 }
